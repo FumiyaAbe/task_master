@@ -1,0 +1,12 @@
+<h1 class="text-xl font-semibold mb-4">Task Master</h1>
+
+<p class="mb-4">
+  <% if user_signed_in? %>
+    ログイン中：<%= current_user.email %>
+    <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "underline ml-3" %>
+  <% else %>
+    未ログインです。
+    <%= link_to "ログイン", new_user_session_path, class: "underline ml-2" %>
+    <%= link_to "新規登録", new_user_registration_path, class: "underline ml-2" %>
+  <% end %>
+</p>
