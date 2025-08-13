@@ -18,13 +18,14 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <%= render "shared/nav" %>
+
+    <main class="container mx-auto mt-6 px-5">
       <% flash.each do |type, message| %>
         <% next if message.blank? %>
         <div role="alert"
@@ -36,4 +37,5 @@
       <%= yield %>
     </main>
   </body>
+
 </html>
