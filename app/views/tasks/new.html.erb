@@ -1,0 +1,17 @@
+<div class="mx-auto max-w-2xl p-4">
+  <h1 class="text-2xl font-bold mb-4">新規タスク</h1>
+
+  <%= simple_form_for(@task) do |f| %>
+    <div class="space-y-4">
+      <%= f.input :title, required: true, input_html: { class: "w-full" } %>
+      <%= f.input :body, as: :text, input_html: { rows: 6, class: "w-full" } %>
+      <%= f.input :due_at, as: :datetime, input_html: { class: "w-full" } %>
+      <%= f.input :status, collection: Task.statuses.keys, include_blank: false %>
+      <%= f.input :priority, collection: Task.priorities.keys, include_blank: false %>
+      <div class="flex gap-2">
+        <%= f.button :submit, "作成する", class: "btn-main" %>
+        <%= link_to "キャンセル", tasks_path, class: "btn-ghost" %>
+      </div>
+    </div>
+  <% end %>
+</div>

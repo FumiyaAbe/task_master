@@ -1,0 +1,29 @@
+<div class="mx-auto max-w-4xl p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-bold">Events</h1>
+    <% if user_signed_in? %>
+      <%= link_to "新規イベント", new_event_path, class: "btn-accent" %>
+    <% end %>
+  </div>
+
+  <% if @events.any? %>
+    <ul class="space-y-2">
+      <% @events.each do |event| %>
+        <li class="rounded-xl border p-3">
+          <div class="flex items-center justify-between">
+            <%= link_to event.title, event_path(event), class: "font-semibold" %>
+            <div class="text-sm opacity-70">
+              <%= l event.starts_at, format: :long %>
+              <% if event.ends_at %> - <%= l event.ends_at, format: :long %><% end %>
+            </div>
+          </div>
+          <% if event.location.present? %>
+            <div class="text-sm opacity-70 mt-1"><%= event.location %></div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="opacity-70">まだイベントがありません。</p>
+  <% end %>
+</div>

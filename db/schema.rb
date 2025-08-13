@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_12_084821) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_131935) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,35 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_084821) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "title", null: false
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at"
+    t.string "location"
+    t.text "notes"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ends_at"], name: "index_events_on_ends_at"
+    t.index ["starts_at"], name: "index_events_on_starts_at"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body"
+    t.datetime "due_at"
+    t.integer "status", default: 0, null: false
+    t.integer "priority", default: 1, null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["due_at"], name: "index_tasks_on_due_at"
+    t.index ["priority"], name: "index_tasks_on_priority"
+    t.index ["status"], name: "index_tasks_on_status"
+    t.index ["user_id"], name: "index_tasks_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -56,4 +85,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_084821) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "events", "users"
+  add_foreign_key "tasks", "users"
 end

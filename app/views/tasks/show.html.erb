@@ -1,0 +1,10 @@
+<div class="mx-auto max-w-3xl p-4">
+  <h1 class="text-2xl font-bold mb-2"><%= @task.title %></h1>
+  <div class="opacity-70 mb-4 text-sm">
+    状態: <%= @task.status %> / 優先度: <%= @task.priority %>
+    <% if @task.due_at %> / 期限: <%= l @task.due_at, format: :long %><% end %>
+  </div>
+  <div class="prose">
+    <%= simple_format(@task.body) %>
+  </div>
+</div>

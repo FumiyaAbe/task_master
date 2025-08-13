@@ -1,0 +1,17 @@
+<div class="mx-auto max-w-2xl p-4">
+  <h1 class="text-2xl font-bold mb-4">新規イベント</h1>
+
+  <%= simple_form_for(@event) do |f| %>
+    <div class="space-y-4">
+      <%= f.input :title, required: true, input_html: { class: "w-full" } %>
+      <%= f.input :starts_at, as: :datetime, required: true, input_html: { class: "w-full" } %>
+      <%= f.input :ends_at,   as: :datetime, input_html: { class: "w-full" } %>
+      <%= f.input :location, input_html: { class: "w-full" } %>
+      <%= f.input :notes, as: :text, input_html: { rows: 6, class: "w-full" } %>
+      <div class="flex gap-2">
+        <%= f.button :submit, "作成する", class: "btn-main" %>
+        <%= link_to "キャンセル", events_path, class: "btn-ghost" %>
+      </div>
+    </div>
+  <% end %>
+</div>
