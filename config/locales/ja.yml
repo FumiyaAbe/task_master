@@ -1,0 +1,28 @@
+ja:
+  time:
+    formats:
+      long: "%Y/%m/%d %H:%M"
+      short: "%m/%d %H:%M"
+  date:
+    formats:
+      long: "%Y/%m/%d"
+      short: "%m/%d"
+
+  activerecord:
+    models:
+      task: タスク
+      event: イベント
+    attributes:
+      task:
+        title: タイトル
+        body: 説明
+        status: 状態
+        priority: 優先度
+        due_at: 期限
+      event:
+        title: タイトル
+        location: 場所
+        starts_at: 開始日時
+        ends_at: 終了日時
+        all_day: 終日
+        notes: メモ

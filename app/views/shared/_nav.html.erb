@@ -1,20 +1,44 @@
-<nav class="w-full border-b">
-  <div class="mx-auto max-w-5xl flex items-center justify-between p-3">
+<nav class="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
+  <div class="mx-auto flex max-w-5xl items-center justify-between p-3">
+    <!-- Brand -->
     <%= link_to "Task Master", root_path, class: "text-lg font-bold" %>
 
-    <div class="flex gap-2">
-      <%= link_to "Tasks",  tasks_path,  class: "btn-ghost" %>
-      <%= link_to "Events", events_path, class: "btn-ghost" %>
+    <!-- Desktop menu -->
+    <div class="hidden gap-2 md:flex">
+      <%= nav_link_to "Tasks",  tasks_path %>
+      <%= nav_link_to "Events", events_path %>
 
       <% if user_signed_in? %>
+        <!-- button_to はリンクと同等の見た目を直指定（非アクティブ相当） -->
         <%= button_to "ログアウト",
               destroy_user_session_path,
               method: :delete,
-              class: "btn-main" %>
+              data: { turbo: false },
+              class: "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition text-gray-700 hover:bg-gray-100" %>
       <% else %>
-        <%= link_to "ログイン", new_user_session_path, class: "btn-main" %>
-        <%= link_to "新規登録", new_user_registration_path, class: "btn-accent" %>
+        <%= nav_link_to "ログイン", new_user_session_path %>
+        <%= nav_link_to "新規登録", new_user_registration_path %>
       <% end %>
     </div>
+
+    <!-- Mobile menu（JS不要の details/summary） -->
+    <details class="md:hidden">
+      <summary class="cursor-pointer rounded-lg px-3 py-2 text-sm hover:bg-gray-100">メニュー</summary>
+      <div class="mt-2 flex flex-col gap-1 rounded-lg border bg-white p-2">
+        <%= nav_link_to "Tasks",  tasks_path,  class: "w-full" %>
+        <%= nav_link_to "Events", events_path, class: "w-full" %>
+
+        <% if user_signed_in? %>
+          <%= button_to "ログアウト",
+                destroy_user_session_path,
+                method: :delete,
+                data: { turbo: false },
+                class: "w-full inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition text-gray-700 hover:bg-gray-100" %>
+        <% else %>
+          <%= nav_link_to "ログイン", new_user_session_path,      class: "w-full" %>
+          <%= nav_link_to "新規登録", new_user_registration_path, class: "w-full" %>
+        <% end %>
+      </div>
+    </details>
   </div>
 </nav>

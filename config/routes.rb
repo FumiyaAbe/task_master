@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  resources :tasks,  only: [ :index, :show, :new, :create ]
-  resources :events, only: [ :index, :show, :new, :create ]
+  # ▼ フルCRUDに変更（edit/update/destroy を含む）
+  resources :tasks
+  resources :events
 end

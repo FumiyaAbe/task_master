@@ -1,16 +1,15 @@
 class TasksController < ApplicationController
-  before_action :authenticate_user!, only: [ :new, :create ]
+  before_action :authenticate_user!
+  before_action :set_task, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @tasks = current_user ? current_user.tasks.order(due_at: :asc, created_at: :desc) : Task.none
+    @tasks = current_user.tasks.order(Arel.sql("due_at NULLS LAST"))
   end
 
-  def show
-    @task = Task.find(params[:id])
-  end
+  def show; end
 
   def new
-    @task = current_user.tasks.build(status: :todo, priority: :medium)
+    @task = current_user.tasks.build
   end
 
   def create
@@ -22,9 +21,28 @@ class TasksController < ApplicationController
     end
   end
 
+  def edit; end
+
+  def update
+    if @task.update(task_params)
+      redirect_to @task, notice: "タスクを更新しました。"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @task.destroy
+    redirect_to tasks_path, notice: "タスクを削除しました。"
+  end
+
   private
 
+  def set_task
+    @task = current_user.tasks.find(params[:id])
+  end
+
   def task_params
-    params.require(:task).permit(:title, :body, :due_at, :status, :priority)
+    params.require(:task).permit(:title, :status, :priority, :due_at, :body)
   end
 end

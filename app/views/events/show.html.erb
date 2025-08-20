@@ -1,11 +1,42 @@
-<div class="mx-auto max-w-3xl p-4">
-  <h1 class="text-2xl font-bold mb-2"><%= @event.title %></h1>
-  <div class="opacity-70 mb-4 text-sm">
-    <%= l @event.starts_at, format: :long %>
-    <% if @event.ends_at %> - <%= l @event.ends_at, format: :long %><% end %>
-    <% if @event.location.present? %> / <%= @event.location %><% end %>
+<div class="mx-auto max-w-3xl px-4 py-6">
+  <div class="card">
+    <!-- タイトル -->
+    <div class="flex items-start justify-between gap-3">
+      <h1 class="text-2xl font-bold"><%= @event.title %></h1>
+      <% if user_signed_in? %>
+        <div class="flex gap-2">
+          <%= link_to "編集", edit_event_path(@event), class: "btn-main" %>
+          <%= button_to "削除", event_path(@event),
+                method: :delete,
+                data: { confirm: "本当に削除しますか？" },
+                class: "btn-ghost" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 開始/終了日時 -->
+    <div class="card-meta mt-3">
+      <% if @event.starts_at.present? %>
+        <span>開始: <%= l(@event.starts_at, format: :long) rescue @event.starts_at.to_s %></span>
+      <% end %>
+      <% if @event.ends_at.present? %>
+        <span class="ml-2">終了: <%= l(@event.ends_at, format: :long) rescue @event.ends_at.to_s %></span>
+      <% end %>
+    </div>
+
+    <!-- 場所 -->
+    <% if @event.location.present? %>
+      <div class="card-meta mt-1">場所: <%= @event.location %></div>
+    <% end %>
+
+    <!-- 説明文 -->
+    <% if @event.notes.present? %>
+      <p class="mt-4 text-gray-700"><%= simple_format(@event.notes) %></p>
+    <% end %>
   </div>
-  <div class="prose">
-    <%= simple_format(@event.notes) %>
+
+  <!-- 戻るボタン -->
+  <div class="mt-4">
+    <%= link_to "イベント一覧に戻る", events_path, class: "btn-ghost" %>
   </div>
 </div>

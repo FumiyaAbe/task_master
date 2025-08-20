@@ -1,0 +1,7 @@
+<div class="page-head">
+  <h1 class="text-2xl font-bold"><%= title %></h1>
+  <% if defined?(action_path) && action_path.present? %>
+    <%= link_to (defined?(action_label) ? action_label : "新規作成"),
+          action_path, class: "btn-main" %>
+  <% end %>
+</div>

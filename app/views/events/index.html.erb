@@ -1,29 +1,71 @@
-<div class="mx-auto max-w-4xl p-4">
-  <div class="flex items-center justify-between mb-4">
+<div class="mx-auto max-w-4xl px-4 py-6">
+  <!-- ヘッダ（タイトル + 新規作成） -->
+  <div class="page-head mb-4">
     <h1 class="text-2xl font-bold">Events</h1>
     <% if user_signed_in? %>
       <%= link_to "新規イベント", new_event_path, class: "btn-accent" %>
     <% end %>
   </div>
 
+  <!-- ===== 一時テストここから：Tailwindの@applyベースUIが効いているか確認 ===== -->
+  <div class="card mb-4">
+    <div class="card-title">コンポーネント確認カード</div>
+    <div class="card-meta">This is a meta text</div>
+    <p class="mt-2">
+      カードの本文です。角丸・枠線・影・余白が当たっていればOKです。
+    </p>
+  </div>
+
+  <div class="mb-4">
+    <input class="input mb-2" placeholder="input の見た目確認">
+    <textarea class="textarea" placeholder="textarea の見た目確認"></textarea>
+  </div>
+
+  <div class="flex gap-2 mb-6">
+    <a href="#" class="btn-ghost">Ghost</a>
+    <a href="#" class="btn-accent">Accent</a>
+  </div>
+  <!-- ===== 一時テストここまで ===== -->
+
   <% if @events.any? %>
-    <ul class="space-y-2">
+    <!-- カードグリッド -->
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
       <% @events.each do |event| %>
-        <li class="rounded-xl border p-3">
-          <div class="flex items-center justify-between">
-            <%= link_to event.title, event_path(event), class: "font-semibold" %>
-            <div class="text-sm opacity-70">
-              <%= l event.starts_at, format: :long %>
-              <% if event.ends_at %> - <%= l event.ends_at, format: :long %><% end %>
+        <div class="card">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <%= link_to event.title, event_path(event), class: "card-title" %>
+
+              <!-- 開始/終了 -->
+              <div class="card-meta mt-2">
+                <% if event.starts_at.present? %>
+                  <span>開始: <%= l(event.starts_at, format: :long) rescue event.starts_at.to_s %></span>
+                <% end %>
+                <% if event.ends_at.present? %>
+                  <span class="ml-2">終了: <%= l(event.ends_at, format: :long) rescue event.ends_at.to_s %></span>
+                <% end %>
+              </div>
+
+              <!-- 場所 -->
+              <% if event.location.present? %>
+                <div class="card-meta mt-1"><%= event.location %></div>
+              <% end %>
             </div>
+
+            <%= link_to "詳細", event_path(event), class: "btn-ghost" %>
           </div>
-          <% if event.location.present? %>
-            <div class="text-sm opacity-70 mt-1"><%= event.location %></div>
-          <% end %>
-        </li>
+        </div>
       <% end %>
-    </ul>
+    </div>
   <% else %>
-    <p class="opacity-70">まだイベントがありません。</p>
+    <!-- 空状態 -->
+    <div class="card">
+      <p class="text-sm text-gray-600">まだイベントがありません。</p>
+      <% if user_signed_in? %>
+        <div class="mt-3">
+          <%= link_to "最初のイベントを作成", new_event_path, class: "btn-accent" %>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>
