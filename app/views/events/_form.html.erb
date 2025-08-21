@@ -1,66 +1,48 @@
 <%= simple_form_for(@event) do |f| %>
   <div class="card space-y-5">
     <!-- タイトル -->
-    <div>
-      <%= f.label :title, "タイトル", class: "form-label" %>
-      <%= f.input :title, label: false,
-            input_html: { class: "input", placeholder: "例）チーム定例" } %>
-      <%= f.error :title, class: "form-error" %>
-    </div>
+    <%= f.input :title,
+                label: "タイトル",
+                input_html: { placeholder: "例）チーム定例" } %>
 
     <!-- 場所 -->
-    <div>
-      <%= f.label :location, "場所", class: "form-label" %>
-      <%= f.input :location, label: false,
-            input_html: { class: "input", placeholder: "例）オンライン / 会議室A" } %>
-      <%= f.error :location, class: "form-error" %>
-    </div>
+    <%= f.input :location,
+                label: "場所",
+                input_html: { placeholder: "例）オンライン / 会議室A" } %>
 
     <!-- 日時（2カラム） -->
     <div class="grid gap-4 md:grid-cols-2">
-      <div>
-        <%= f.label :starts_at, "開始日時", class: "form-label" %>
-        <%= f.input :starts_at, label: false,
-              as: :string,
-              input_html: {
-                type: "datetime-local",
-                class: "input"
-              } %>
-        <%= f.error :starts_at, class: "form-error" %>
-      </div>
+      <%= f.input :starts_at,
+                  as: :string,
+                  label: "開始日時",
+                  input_html: { type: "datetime-local" } %>
 
-      <div>
-        <%= f.label :ends_at, "終了日時", class: "form-label" %>
-        <%= f.input :ends_at, label: false,
-              as: :string,
-              input_html: {
-                type: "datetime-local",
-                class: "input"
-              } %>
-        <%= f.error :ends_at, class: "form-error" %>
-      </div>
+      <%= f.input :ends_at,
+                  as: :string,
+                  label: "終了日時",
+                  input_html: { type: "datetime-local" } %>
     </div>
 
     <!-- 終日フラグ（カラムがある時だけ表示） -->
     <% if f.object.respond_to?(:all_day) %>
       <div class="flex items-center gap-2">
-        <%= f.input :all_day, as: :boolean, label: false, input_html: { class: "checkbox" } %>
-        <%= f.label :all_day, "終日のイベント" %>
+        <%= f.input :all_day,
+                    as: :boolean,
+                    label: "終日のイベント",
+                    wrapper_html: { class: "m-0" } %>
       </div>
     <% end %>
 
-    <!-- メモ（:notes に統一） -->
-    <div>
-      <%= f.label :notes, "メモ", class: "form-label" %>
-      <%= f.input :notes, as: :text, label: false,
-            input_html: { class: "textarea", placeholder: "補足やアジェンダなどを記入" } %>
-      <%= f.error :notes, class: "form-error" %>
-    </div>
+    <!-- メモ -->
+    <%= f.input :notes,
+                as: :text,
+                label: "メモ",
+                input_html: { placeholder: "補足やアジェンダなどを記入" } %>
 
     <!-- アクション -->
     <div class="flex items-center justify-end gap-2">
       <%= link_to "一覧に戻る", events_path, class: "btn-ghost" %>
-      <%= f.button :submit, class: "btn-main", value: (@event.persisted? ? "更新する" : "作成する") %>
+      <%= f.button :submit, (@event.persisted? ? "更新する" : "作成する"), class: "btn-main" %>
     </div>
   </div>
 <% end %>
