@@ -69,3 +69,5 @@ gem "rails-i18n", "~> 8.0"
 gem "devise", "~> 4.9"
 
 gem "simple_form", "~> 5.3"
+
+gem "devise-i18n"
