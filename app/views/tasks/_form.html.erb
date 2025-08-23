@@ -1,55 +1,44 @@
 <%= simple_form_for(@task) do |f| %>
+  <%= f.error_notification message: "入力内容を確認してください。" %>
+  
   <div class="card space-y-5">
     <!-- タイトル -->
-    <div>
-      <%= f.label :title, "タイトル", class: "form-label" %>
-      <%= f.input :title, label: false, required: true,
-            input_html: { class: "input", placeholder: "例）仕様確認タスク" } %>
-      <%= f.error :title, class: "form-error" %>
-    </div>
+    <%= f.input :title,
+                label: "タイトル",
+                required: true,
+                input_html: { placeholder: "例）仕様確認タスク" } %>
 
     <!-- ステータス / 優先度 -->
     <div class="grid gap-4 md:grid-cols-2">
-      <div>
-        <%= f.label :status, "状態", class: "form-label" %>
-        <%= f.input :status, label: false,
-              collection: (Task.respond_to?(:statuses) ? Task.statuses.keys : %w[todo doing done]),
-              prompt: "選択してください",
-              input_html: { class: "input" } %>
-        <%= f.error :status, class: "form-error" %>
-      </div>
+      <%= f.input :status,
+                  as: :select,
+                  label: "状態",
+                  collection: (Task.respond_to?(:statuses) ? Task.statuses.keys : %w[todo doing done]),
+                  prompt: "選択してください" %>
 
-      <div>
-        <%= f.label :priority, "優先度", class: "form-label" %>
-        <%= f.input :priority, label: false,
-              collection: (Task.respond_to?(:priorities) ? Task.priorities.keys : %w[low medium high urgent]),
-              prompt: "選択してください",
-              input_html: { class: "input" } %>
-        <%= f.error :priority, class: "form-error" %>
-      </div>
+      <%= f.input :priority,
+                  as: :select,
+                  label: "優先度",
+                  collection: (Task.respond_to?(:priorities) ? Task.priorities.keys : %w[low medium high urgent]),
+                  prompt: "選択してください" %>
     </div>
 
     <!-- 期限 -->
-    <div>
-      <%= f.label :due_at, "期限", class: "form-label" %>
-      <%= f.input :due_at, label: false,
-            as: :string,
-            input_html: { type: "datetime-local", class: "input" } %>
-      <%= f.error :due_at, class: "form-error" %>
-    </div>
+    <%= f.input :due_at,
+                as: :string,
+                label: "期限",
+                input_html: { type: "datetime-local" } %>
 
     <!-- 説明 -->
-    <div>
-      <%= f.label :body, "説明", class: "form-label" %>
-      <%= f.input :body, as: :text, label: false,
-            input_html: { class: "textarea", placeholder: "補足があれば記入" } %>
-      <%= f.error :body, class: "form-error" %>
-    </div>
+    <%= f.input :body,
+                as: :text,
+                label: "説明",
+                input_html: { placeholder: "補足があれば記入" } %>
 
     <!-- アクション -->
     <div class="flex items-center justify-end gap-2">
       <%= link_to "一覧に戻る", tasks_path, class: "btn-ghost" %>
-      <%= f.button :submit, class: "btn-main", value: (@task.persisted? ? "更新する" : "作成する") %>
+      <%= f.button :submit, (@task.persisted? ? "更新する" : "作成する"), class: "btn-main" %>
     </div>
   </div>
 <% end %>

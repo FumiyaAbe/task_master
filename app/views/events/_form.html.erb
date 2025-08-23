@@ -1,4 +1,7 @@
 <%= simple_form_for(@event) do |f| %>
+  <!-- ✨ エラーサマリー -->
+  <%= f.error_notification message: "入力内容を確認してください。" %>
+  
   <div class="card space-y-5">
     <!-- タイトル -->
     <%= f.input :title,
