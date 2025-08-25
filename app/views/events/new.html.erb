@@ -4,66 +4,6 @@
     <h1 class="text-2xl font-bold">新規イベント</h1>
   </div>
 
-  <%= simple_form_for(@event) do |f| %>
-    <div class="card space-y-5">
-      <!-- タイトル -->
-      <div>
-        <%= f.label :title, "タイトル", class: "form-label" %>
-        <%= f.input :title, label: false,
-              required: true,
-              input_html: { class: "input", placeholder: "例）チーム定例" } %>
-        <%= f.error :title, class: "form-error" %>
-      </div>
+  <%= render "form", event: @event %>
 
-      <!-- 場所 -->
-      <div>
-        <%= f.label :location, "場所", class: "form-label" %>
-        <%= f.input :location, label: false,
-              input_html: { class: "input", placeholder: "例）オンライン / 会議室A" } %>
-        <%= f.error :location, class: "form-error" %>
-      </div>
-
-      <!-- 日時（2カラム） -->
-      <div class="grid gap-4 md:grid-cols-2">
-        <div>
-          <%= f.label :starts_at, "開始日時", class: "form-label" %>
-          <%= f.input :starts_at, label: false,
-                required: true,
-                as: :string,
-                input_html: { type: "datetime-local", class: "input" } %>
-          <%= f.error :starts_at, class: "form-error" %>
-        </div>
-
-        <div>
-          <%= f.label :ends_at, "終了日時", class: "form-label" %>
-          <%= f.input :ends_at, label: false,
-                as: :string,
-                input_html: { type: "datetime-local", class: "input" } %>
-          <%= f.error :ends_at, class: "form-error" %>
-        </div>
-      </div>
-
-      <!-- 終日（カラムがある場合のみ表示） -->
-      <% if @event.respond_to?(:all_day) %>
-        <div class="flex items-center gap-2">
-          <%= f.input :all_day, as: :boolean, label: false, input_html: { class: "checkbox" } %>
-          <%= f.label :all_day, "終日のイベント" %>
-        </div>
-      <% end %>
-
-      <!-- メモ（コントローラは :notes を許可） -->
-      <div>
-        <%= f.label :notes, "メモ", class: "form-label" %>
-        <%= f.input :notes, as: :text, label: false,
-              input_html: { class: "textarea", placeholder: "補足やアジェンダなどを記入" } %>
-        <%= f.error :notes, class: "form-error" %>
-      </div>
-
-      <!-- アクション -->
-      <div class="flex items-center justify-end gap-2">
-        <%= link_to "キャンセル", events_path, class: "btn-ghost" %>
-        <%= f.button :submit, "作成する", class: "btn-main" %>
-      </div>
-    </div>
-  <% end %>
 </div>

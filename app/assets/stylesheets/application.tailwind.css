@@ -50,8 +50,57 @@
   .form-hint  { @apply mt-1 text-xs text-gray-500; }
   .form-error { @apply mt-1 text-xs text-red-600; }
 
-  /* ▼ 追加：SimpleForm連携のエラー用クラス */
+  /* ▼ 追加：SimpleForm / Rails のエラー表示 */
   .input-error { @apply ring-1 ring-red-500 border-red-500 bg-red-50; }
+
+  /* Rails 標準 field_with_errors ラッパ */
+  .field_with_errors > input,
+  .field_with_errors > textarea,
+  .field_with_errors > select {
+    @apply input-error;
+  }
+
+  /* Simple Form: div.input.error の内側要素を赤枠に */
+  .simple_form div.input.error input,
+  .simple_form div.input.error textarea,
+  .simple_form div.input.error select {
+    @apply input-error;
+  }
+
+  /* エラー時のラベル色 */
+  .simple_form div.input.error label,
+  .input.error .form-label {
+    @apply text-red-700;
+  }
+
+  /* invalid-feedback クラス（Simple Form が使うことあり） */
+  .invalid-feedback {
+    @apply mt-1 text-xs text-red-600;
+  }
+
+  /* エラーサマリー（f.error_notification） */
+  .simple_form .error_notification {
+    @apply mx-auto max-w-3xl mb-3 rounded-xl px-4 py-3 text-sm
+           border border-red-200 bg-red-50 text-red-700;
+  }
+
+  /* --- Simple Form のデフォルト error クラスに対応 --- */
+  .simple_form .error {
+    @apply text-red-600 text-sm mt-1;
+  }
+
+  /* wrapper が .error のときも入力枠を赤にする（.input だけに依存しない） */
+  .simple_form .error input,
+  .simple_form .error textarea,
+  .simple_form .error select {
+    @apply input-error;
+  }
+
+  /* 念のため label も赤く（wrapper に .error が付く前提） */
+  .simple_form .error label {
+    @apply text-red-700;
+  }
+
   .flash-error { @apply mx-auto max-w-3xl mb-3 rounded-xl px-4 py-3 text-sm
                         border border-red-200 bg-red-50 text-red-700; }
 
@@ -59,4 +108,29 @@
   .flash-notice { @apply flash-base bg-green-50 text-green-800 border border-green-200; }
   .flash-alert  { @apply flash-base bg-red-50   text-red-800   border border-red-200; }
   .flash-info   { @apply flash-base bg-blue-50  text-blue-800  border border-blue-200; }
+
+  /* ==== ここから補強（wrapper: :tailwind の has-error 等も拾う） ==== */
+
+  /* 1) tailwind wrapper の has-error にも赤枠・赤文字 */
+  .simple_form .has-error input,
+  .simple_form .has-error textarea,
+  .simple_form .has-error select { @apply input-error; }
+  .simple_form .has-error label { @apply text-red-700; }
+
+  /* 2) <span class="error"> を赤に（環境によって出力される） */
+  span.error { @apply mt-1 text-xs text-red-600; }
+
+  /* 3) error_notification クラスを単体でも拾う */
+  .error_notification {
+    @apply mx-auto max-w-3xl mb-3 rounded-xl px-4 py-3 text-sm
+           border border-red-200 bg-red-50 text-red-700;
+  }
+
+  /* 4) 入力に is-invalid が付く環境のフォールバック */
+  input.is-invalid,
+  textarea.is-invalid,
+  select.is-invalid { @apply input-error; }
+
+  .calendar-week { @apply grid grid-cols-7 gap-2 text-sm mb-2; }
+  .calendar-grid { @apply grid grid-cols-7 gap-2; }
 }

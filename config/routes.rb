@@ -2,9 +2,14 @@ Rails.application.routes.draw do
   get "pages/home"
   devise_for :users
 
+  # ▼ ルート専用ページ（Dashboard：カレンダー）
+  # 直接アクセス用のパス（root とは別に /dashboard でも開ける）
+  get "dashboard", to: "dashboards#home", as: :dashboard
+
   # 認証済みユーザーのルート
   authenticated :user do
-    root "events#index", as: :authenticated_root
+    # ルートを DashboardsController#home に変更（カレンダー表示）
+    root "dashboards#home", as: :authenticated_root
   end
 
   # 未認証ユーザーのルート

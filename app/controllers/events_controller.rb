@@ -17,7 +17,8 @@ class EventsController < ApplicationController
     if @event.save
       redirect_to @event, notice: "イベントを作成しました。"
     else
-      render :new, status: :unprocessable_entity
+      # Rails 7+ 推奨: :unprocessable_content
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -27,7 +28,8 @@ class EventsController < ApplicationController
     if @event.update(event_params)
       redirect_to @event, notice: "イベントを更新しました。"
     else
-      render :edit, status: :unprocessable_entity
+      # Rails 7+ 推奨: :unprocessable_content
+      render :edit, status: :unprocessable_content
     end
   end
 

@@ -1,29 +1,54 @@
-<%= simple_form_for(@event) do |f| %>
-  <!-- ✨ エラーサマリー -->
-  <%= f.error_notification message: "入力内容を確認してください。" %>
-  
+<%= simple_form_for(@event, wrapper: :default) do |f| %>
+  <!-- ✨ エラーサマリー（共通パーシャル） -->
+  <%= render "shared/error_summary", resource: @event %>
+
+  <%# datetime-local 用の値をHTML5形式へ整形 %>
+  <% starts_val = @event.starts_at&.strftime("%Y-%m-%dT%H:%M") %>
+  <% ends_val   = @event.ends_at&.strftime("%Y-%m-%dT%H:%M") %>
+
   <div class="card space-y-5">
-    <!-- タイトル -->
+    <!-- タイトル（必須・最大100） -->
     <%= f.input :title,
                 label: "タイトル",
-                input_html: { placeholder: "例）チーム定例" } %>
+                required: true,
+                input_html: {
+                  placeholder: "例）チーム定例",
+                  maxlength: 100,
+                  autofocus: true
+                } %>
 
-    <!-- 場所 -->
+    <!-- 場所（最大100） -->
     <%= f.input :location,
                 label: "場所",
-                input_html: { placeholder: "例）オンライン / 会議室A" } %>
+                input_html: {
+                  placeholder: "例）オンライン / 会議室A",
+                  maxlength: 100
+                } %>
 
     <!-- 日時（2カラム） -->
     <div class="grid gap-4 md:grid-cols-2">
       <%= f.input :starts_at,
                   as: :string,
                   label: "開始日時",
-                  input_html: { type: "datetime-local" } %>
+                  required: true,
+                  input_html: {
+                    type: "datetime-local",
+                    value: starts_val,
+                    step: 60,
+                    autocomplete: "off"
+                  } %>
 
       <%= f.input :ends_at,
                   as: :string,
                   label: "終了日時",
-                  input_html: { type: "datetime-local" } %>
+                  required: true,
+                  input_html: {
+                    type: "datetime-local",
+                    value: ends_val,
+                    step: 60,
+                    autocomplete: "off",
+                    min: starts_val
+                  } %>
     </div>
 
     <!-- 終日フラグ（カラムがある時だけ表示） -->
@@ -36,11 +61,15 @@
       </div>
     <% end %>
 
-    <!-- メモ -->
+    <!-- メモ（最大2000） -->
     <%= f.input :notes,
                 as: :text,
                 label: "メモ",
-                input_html: { placeholder: "補足やアジェンダなどを記入" } %>
+                input_html: {
+                  placeholder: "補足やアジェンダなどを記入",
+                  rows: 6,
+                  maxlength: 2000
+                } %>
 
     <!-- アクション -->
     <div class="flex items-center justify-end gap-2">

@@ -1,0 +1,51 @@
+<div class="mx-auto max-w-5xl px-4 py-6">
+  <div class="page-head mb-4">
+    <h1 class="text-2xl font-bold">カレンダー</h1>
+    <div class="flex gap-2">
+      <% prev = (@date - 1.month).strftime("%Y-%m") %>
+      <% next_m = (@date + 1.month).strftime("%Y-%m") %>
+      <%= link_to "〈 前の月", dashboard_path(month: prev), class: "btn-ghost" %>
+      <%= link_to "次の月 〉", dashboard_path(month: next_m), class: "btn-ghost" %>
+    </div>
+  </div>
+
+  <!-- 曜日 -->
+  <div class="calendar-week grid grid-cols-7 gap-2 text-sm mb-2">
+    <% %w[日 月 火 水 木 金 土].each do |w| %>
+      <div class="text-center font-semibold text-gray-600"><%= w %></div>
+    <% end %>
+  </div>
+
+  <!-- 7×6 グリッド -->
+  <div class="calendar-grid grid grid-cols-7 gap-2 auto-rows-[minmax(120px,auto)]">
+    <% @calendar_days.each do |week| %>
+      <% week.each do |day| %>
+        <% is_current_month = (day.month == @date.month) %>
+        <% is_today = (day == Date.current) %>
+
+        <div class="h-full rounded-xl border p-2 <%= is_current_month ? 'bg-white' : 'bg-gray-50' %> <%= is_today ? 'ring-2 ring-accent' : '' %>">
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-xs <%= is_current_month ? 'text-gray-700' : 'text-gray-400' %>"><%= day.day %></span>
+            <% if is_today %><span class="badge-red">今日</span><% end %>
+          </div>
+
+          <div class="space-y-1">
+            <% Array(@events_by_day[day]).each do |ev| %>
+              <div class="truncate">
+                <span class="badge-indigo"><%= ev.starts_at.strftime("%H:%M") %></span>
+                <span class="ml-1"><%= ev.title %></span>
+              </div>
+            <% end %>
+
+            <% Array(@tasks_by_day[day]).each do |task| %>
+              <div class="truncate">
+                <span class="badge-green">Task</span>
+                <span class="ml-1"><%= task.title %></span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

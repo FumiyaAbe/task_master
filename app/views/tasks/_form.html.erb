@@ -1,12 +1,16 @@
-<%= simple_form_for(@task) do |f| %>
-  <%= f.error_notification message: "入力内容を確認してください。" %>
-  
+<%= simple_form_for(@task, wrapper: :default) do |f| %>
+  <!-- ✨ エラーサマリー（共通パーシャル） -->
+  <%= render "shared/error_summary", resource: @task %>
+
+  <%# datetime-local 用の値をHTML5形式へ整形（期限がある場合） %>
+  <% due_val = @task.respond_to?(:due_at) ? @task.due_at&.strftime("%Y-%m-%dT%H:%M") : nil %>
+
   <div class="card space-y-5">
-    <!-- タイトル -->
+    <!-- タイトル（必須・最大100） -->
     <%= f.input :title,
                 label: "タイトル",
                 required: true,
-                input_html: { placeholder: "例）仕様確認タスク" } %>
+                input_html: { placeholder: "例）仕様確認タスク", maxlength: 100 } %>
 
     <!-- ステータス / 優先度 -->
     <div class="grid gap-4 md:grid-cols-2">
@@ -24,16 +28,18 @@
     </div>
 
     <!-- 期限 -->
-    <%= f.input :due_at,
-                as: :string,
-                label: "期限",
-                input_html: { type: "datetime-local" } %>
+    <% if @task.respond_to?(:due_at) %>
+      <%= f.input :due_at,
+                  as: :string,
+                  label: "期限",
+                  input_html: { type: "datetime-local", value: due_val, step: 60, autocomplete: "off" } %>
+    <% end %>
 
-    <!-- 説明 -->
+    <!-- 説明（最大2000） -->
     <%= f.input :body,
                 as: :text,
                 label: "説明",
-                input_html: { placeholder: "補足があれば記入" } %>
+                input_html: { placeholder: "補足があれば記入", maxlength: 2000 } %>
 
     <!-- アクション -->
     <div class="flex items-center justify-end gap-2">
