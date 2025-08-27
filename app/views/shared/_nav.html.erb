@@ -1,41 +1,39 @@
-<nav class="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
+<nav class="site-header sticky top-0 z-40 w-full border-b backdrop-blur bg-main text-white">
   <div class="mx-auto flex max-w-5xl items-center justify-between p-3">
     <!-- Brand -->
-    <%= link_to "Task Master", root_path, class: "text-lg font-bold" %>
+    <%= link_to "Task Master", root_path, class: "text-lg font-bold text-white" %>
 
     <!-- Desktop menu -->
     <div class="hidden gap-2 md:flex">
       <% if user_signed_in? %>
-        <%= nav_link_to "Tasks",  tasks_path %>
-        <%= nav_link_to "Events", events_path %>
-        <!-- ログアウト -->
+        <%= nav_link_to "Tasks",  tasks_path,  variant: :dark %>
+        <%= nav_link_to "Events", events_path, variant: :dark %>
         <%= button_to "ログアウト",
               destroy_user_session_path,
               method: :delete,
               data: { turbo: false },
-              class: "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition text-gray-700 hover:bg-gray-100" %>
+              class: "inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition border border-white/20 text-white hover:bg-white/10" %>
       <% else %>
-        <%= nav_link_to "ログイン", new_user_session_path %>
-        <%= nav_link_to "新規登録", new_user_registration_path %>
+        <%= nav_link_to "ログイン",   new_user_session_path,      variant: :dark %>
+        <%= nav_link_to "新規登録",   new_user_registration_path, variant: :dark %>
       <% end %>
     </div>
 
-    <!-- Mobile menu（JS不要の details/summary） -->
+    <!-- Mobile menu -->
     <details class="md:hidden">
-      <summary class="cursor-pointer rounded-lg px-3 py-2 text-sm hover:bg-gray-100">メニュー</summary>
-      <div class="mt-2 flex flex-col gap-1 rounded-lg border bg-white p-2">
+      <summary class="cursor-pointer rounded-lg px-3 py-2 text-sm text-white hover:bg-white/10">メニュー</summary>
+      <div class="mt-2 flex flex-col gap-1 rounded-lg border border-white/20 bg-main/95 p-2">
         <% if user_signed_in? %>
-          <%= nav_link_to "Tasks",  tasks_path,  class: "w-full" %>
-          <%= nav_link_to "Events", events_path, class: "w-full" %>
-          <!-- ログアウト -->
+          <%= nav_link_to "Tasks",  tasks_path,  variant: :dark, class: "w-full" %>
+          <%= nav_link_to "Events", events_path, variant: :dark, class: "w-full" %>
           <%= button_to "ログアウト",
                 destroy_user_session_path,
                 method: :delete,
                 data: { turbo: false },
-                class: "w-full inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition text-gray-700 hover:bg-gray-100" %>
+                class: "w-full inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition border border-white/20 text-white hover:bg-white/10" %>
         <% else %>
-          <%= nav_link_to "ログイン", new_user_session_path,      class: "w-full" %>
-          <%= nav_link_to "新規登録", new_user_registration_path, class: "w-full" %>
+          <%= nav_link_to "ログイン",   new_user_session_path,      variant: :dark, class: "w-full" %>
+          <%= nav_link_to "新規登録",   new_user_registration_path, variant: :dark, class: "w-full" %>
         <% end %>
       </div>
     </details>

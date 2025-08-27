@@ -5,12 +5,19 @@
 /* ---- Tailwind v4: カスタムカラー定義 ---- */
 @theme {
   --color-base:   #F9FAFB;
-  --color-main:   #1D4E89;
+  --color-main:   #0F3A69;
   --color-accent: #2563EB;
 }
 
 /* === Custom === */
 @layer base {
+  /* 追加：CSS変数を :root にも明示定義（@theme が効かない環境の保険） */
+  :root {
+    --color-base:   #F9FAFB;
+    --color-main:   #0F3A69;
+    --color-accent: #2563EB;
+  }
+
   body { @apply bg-base text-gray-900; }
 }
 
@@ -133,4 +140,21 @@
 
   .calendar-week { @apply grid grid-cols-7 gap-2 text-sm mb-2; }
   .calendar-grid { @apply grid grid-cols-7 gap-2; }
+
+  /* --- site header hardening --- */
+  .site-header {
+    /* 直指定で確実に紺へ（変数未定義時も #0F3A69 を採用） */
+    background-color: var(--color-main, #0F3A69);
+    color: #fff;
+    @apply bg-main text-white;
+  }
+  .site-header a { @apply text-white/90 hover:text-white; }
 }
+
+/* ▼▼▼ Step.1 追加：ユーティリティの手動定義（@theme の保険） ▼▼▼ */
+@layer utilities {
+  .bg-main     { background-color: var(--color-main); }
+  .text-main   { color:            var(--color-main); }
+  .border-main { border-color:     var(--color-main); }
+}
+/* ▲▲▲ ここまで Step.1 追加 ▲▲▲ */

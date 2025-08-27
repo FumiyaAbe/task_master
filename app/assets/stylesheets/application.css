@@ -3,3 +3,7 @@
  * Tailwindの記述（@import, @theme, @layer など）は application.tailwind.css に集約しました。
  * 必要な通常CSSだけここへ書いてください（空でもOK）。
  */
+
+ /* TEMP: 強制オーバーライド（Tailwindビルド無視で確実に反映） */
+.site-header { background-color: #0F3A69 !important; color: #fff !important; }
+.site-header a { color: rgba(255,255,255,.9) !important; }
