@@ -6,6 +6,11 @@ Rails.application.routes.draw do
   # 直接アクセス用のパス（root とは別に /dashboard でも開ける）
   get "dashboard", to: "dashboards#home", as: :dashboard
 
+  # ▼ 日別ページ: /day/YYYY-MM-DD → DaysController#show
+  get "day/:date", to: "days#show",
+      as: :day,
+      constraints: { date: /\d{4}-\d{2}-\d{2}/ }
+
   # 認証済みユーザーのルート
   authenticated :user do
     # ルートを DashboardsController#home に変更（カレンダー表示）
