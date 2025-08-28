@@ -6,8 +6,8 @@
     <!-- Desktop menu -->
     <div class="hidden gap-2 md:flex">
       <% if user_signed_in? %>
-        <%= nav_link_to "Tasks",  tasks_path,  variant: :dark %>
-        <%= nav_link_to "Events", events_path, variant: :dark %>
+        <%= nav_link_to "Tasks",  tasks_path,  variant: :dark, match: :prefix %>
+        <%= nav_link_to "Events", events_path, variant: :dark, match: :prefix %>
         <%= button_to "ログアウト",
               destroy_user_session_path,
               method: :delete,
@@ -24,8 +24,8 @@
       <summary class="cursor-pointer rounded-lg px-3 py-2 text-sm text-white hover:bg-white/10">メニュー</summary>
       <div class="mt-2 flex flex-col gap-1 rounded-lg border border-white/20 bg-main/95 p-2">
         <% if user_signed_in? %>
-          <%= nav_link_to "Tasks",  tasks_path,  variant: :dark, class: "w-full" %>
-          <%= nav_link_to "Events", events_path, variant: :dark, class: "w-full" %>
+          <%= nav_link_to "Tasks",  tasks_path,  variant: :dark, match: :prefix, class: "w-full" %>
+          <%= nav_link_to "Events", events_path, variant: :dark, match: :prefix, class: "w-full" %>
           <%= button_to "ログアウト",
                 destroy_user_session_path,
                 method: :delete,

@@ -4,6 +4,41 @@
  * 必要な通常CSSだけここへ書いてください（空でもOK）。
  */
 
- /* TEMP: 強制オーバーライド（Tailwindビルド無視で確実に反映） */
-.site-header { background-color: #0F3A69 !important; color: #fff !important; }
-.site-header a { color: rgba(255,255,255,.9) !important; }
+:root {
+  --tm-color-main: #0F3A69; /* ヘッダーと同じテーマ色 */
+}
+
+/* 恒久化：!importantを外す（Tailwindより後に読まれる想定） */
+.site-header { background-color: #0F3A69; color: #fff; }
+.site-header a { color: rgba(255,255,255,.9); }
+
+/* 当日セルの内側リング */
+.tm-today {
+  border-color: #0F3A69; 
+  box-shadow: inset 0 0 0 2px var(--tm-color-main);
+  border-radius: 0.75rem;
+}
+
+/* 時刻バッジ（Event） */
+.tm-time {
+  border: 1px solid #c7d2fe;     /* indigo-200 */
+  background: #eef2ff;           /* indigo-50 近似 */
+  color: #4f46e5;                 /* indigo-600 */
+  padding: 0 0.25rem;             /* px-1 相当 */
+  border-radius: 0.25rem;         /* rounded */
+  font-size: 0.75rem;             /* text-xs */
+  line-height: 1rem;              /* leading-4 */
+  white-space: nowrap;
+}
+
+/* 追加: Task向けの時刻バッジ（エメラルド系） */
+.tm-time--task {
+  border: 1px solid #a7f3d0;   /* emerald-200 */
+  background: #ecfdf5;         /* emerald-50 */
+  color: #047857;              /* emerald-700 */
+  padding: 0 0.25rem;          /* px-1 */
+  border-radius: 0.25rem;      /* rounded */
+  font-size: 0.75rem;          /* text-xs */
+  line-height: 1rem;           /* leading-4 */
+  white-space: nowrap;
+}
