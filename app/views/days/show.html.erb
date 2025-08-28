@@ -1,0 +1,104 @@
+<!-- app/views/days/show.html.erb -->
+<div class="mx-auto max-w-5xl p-4 space-y-6">
+  <!-- ヘッダー -->
+  <header class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">
+      <%= @date.strftime("%Y年 %-m月 %-d日 (%a)") %>
+    </h1>
+
+    <%# ダッシュボード（月ビュー）へ戻る。月は当日から算出し、トグル状態も引き継ぐ %>
+    <%= link_to "← ダッシュボードへ戻る",
+                dashboard_path(
+                  month: @date.strftime("%Y-%m"),
+                  show_events: (@show_events ? "1" : "0"),
+                  show_tasks:  (@show_tasks  ? "1" : "0")
+                ),
+                class: "text-sm underline hover:no-underline" %>
+  </header>
+
+  <!-- 表示トグル（即時送信） -->
+  <section class="rounded-xl border p-4">
+    <h2 class="font-semibold mb-3">表示設定</h2>
+    <%= form_with url: day_path(date: @date.to_s), method: :get, local: true do %>
+      <!-- date は固定（Hidden） -->
+      <%= hidden_field_tag :date, @date.to_s %>
+
+      <label class="mr-6 inline-flex items-center space-x-2">
+        <%= check_box_tag :show_events, "1", @show_events, onchange: "this.form.submit()" %>
+        <span>Events を表示</span>
+      </label>
+
+      <label class="inline-flex items-center space-x-2">
+        <%= check_box_tag :show_tasks, "1", @show_tasks, onchange: "this.form.submit()" %>
+        <span>Tasks を表示</span>
+      </label>
+    <% end %>
+  </section>
+
+  <!-- Events 一覧 -->
+  <% if @show_events %>
+    <section class="space-y-2">
+      <h2 class="text-xl font-semibold">Events</h2>
+      <% if @events.any? %>
+        <ul class="divide-y rounded-xl border">
+          <% @events.each do |e| %>
+            <li class="p-3">
+              <div class="flex items-center justify-between">
+                <div class="font-medium"><%= e.title.presence || "（無題）" %></div>
+                <div class="text-sm text-gray-600">
+                  <%# 開始〜終了の簡易表示（終了が無ければ開始のみ） %>
+                  <% st = e.starts_at&.in_time_zone %>
+                  <% en = (e.ends_at || e.starts_at)&.in_time_zone %>
+                  <%= st&.strftime("%H:%M") %>
+                  <% if en %>– <%= en.strftime("%H:%M") %><% end %>
+                  <% if e.respond_to?(:location) && e.location.present? %>
+                    · <%= e.location %>
+                  <% end %>
+                </div>
+              </div>
+              <% if e.respond_to?(:notes) && e.notes.present? %>
+                <p class="mt-1 text-sm text-gray-700 whitespace-pre-line"><%= e.notes %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-gray-600">この日に該当するイベントはありません。</p>
+      <% end %>
+    </section>
+  <% end %>
+
+  <!-- Tasks 一覧 -->
+  <% if @show_tasks %>
+    <section class="space-y-2">
+      <h2 class="text-xl font-semibold">Tasks</h2>
+      <% if @tasks.any? %>
+        <ul class="divide-y rounded-xl border">
+          <% @tasks.each do |t| %>
+            <li class="p-3">
+              <div class="flex items-center justify-between">
+                <div class="font-medium"><%= t.title %></div>
+                <div class="text-sm text-gray-600">
+                  <% if t.respond_to?(:due_at) && t.due_at.present? %>
+                    期限: <%= t.due_at.in_time_zone.strftime("%H:%M") %>
+                  <% end %>
+                  <% if t.respond_to?(:status) %>
+                    · 状態: <span class="px-2 py-0.5 rounded-full border text-xs"><%= t.status %></span>
+                  <% end %>
+                  <% if t.respond_to?(:priority) %>
+                    · 優先度: <span class="px-2 py-0.5 rounded-full border text-xs"><%= t.priority %></span>
+                  <% end %>
+                </div>
+              </div>
+              <% if t.respond_to?(:body) && t.body.present? %>
+                <p class="mt-1 text-sm text-gray-700 whitespace-pre-line"><%= t.body %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-gray-600">この日に該当するタスクはありません。</p>
+      <% end %>
+    </section>
+  <% end %>
+</div>
