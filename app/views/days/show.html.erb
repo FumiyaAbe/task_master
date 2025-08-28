@@ -20,7 +20,11 @@
   <section class="rounded-xl border p-4">
     <h2 class="font-semibold mb-3">表示設定</h2>
     <%= form_with url: day_path(date: @date.to_s), method: :get, local: true do %>
-      <!-- date は固定（Hidden） -->
+      <!-- 未チェック時も確実に 0 を送るための hidden をペアで置く -->
+      <%= hidden_field_tag :show_events, "0" %>
+      <%= hidden_field_tag :show_tasks,  "0" %>
+
+      <!-- date はそのまま送る（URLの /day/:date と重複しても動作に影響なし。重複を避けたい場合はこの hidden を削除してOK） -->
       <%= hidden_field_tag :date, @date.to_s %>
 
       <label class="mr-6 inline-flex items-center space-x-2">
@@ -34,6 +38,7 @@
       </label>
     <% end %>
   </section>
+
 
   <!-- Events 一覧 -->
   <% if @show_events %>
