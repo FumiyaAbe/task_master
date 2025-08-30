@@ -64,10 +64,32 @@
              end %>
 
         <div class="h-full rounded-xl border p-2 <%= is_current_month ? 'bg-white' : 'bg-gray-50' %> <%= 'tm-today' if is_today %>">
+
+          <%# 日付数字出力 %>
           <div class="mb-2 flex items-center justify-between">
-            <span class="text-xs <%= day_color %>"><%= day.day %></span>
+            <%# 種別（平日/当月外/日曜/土曜）によって色セットを決定 %>
+            <% kind =
+                 if wday == 0
+                   "chip-sun"          # 日曜：赤文字＋薄赤背景
+                 elsif wday == 6
+                   "chip-sat"          # 土曜：青文字＋薄青背景
+                 else
+                   is_current_month ? "chip-wd" : "chip-out"  # 平日（当月/当月外）
+                 end %>
+
+            <%= link_to day_path(
+                  date: day.to_s,
+                  show_events: (@show_events ? "1" : "0"),
+                  show_tasks:  (@show_tasks  ? "1" : "0")
+                ),
+                class: "chip-base chip-circle #{kind}",
+                "aria-label": day.strftime('%Y-%m-%d の日別ページ') do %>
+              <%= day.day %>
+            <% end %>
+
             <% if is_today %><span class="badge-red">今日</span><% end %>
           </div>
+
 
           <div class="space-y-1">
             <% Array(@events_by_day[day]).each do |ev| %>
