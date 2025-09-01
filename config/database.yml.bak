@@ -18,14 +18,6 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  #
-  # ---- Local connection defaults (explicit) ----
-  # ローカルの Postgres に接続するためのデフォルト値を明示します。
-  # ここは開発・テスト・（必要なら）本番の共通値として継承されます。
-  host: localhost      # ← ローカルのホスト名
-  port: 5432           # ← Postgres のデフォルトポート
-  # username: postgres   # ← ローカルの PG ユーザー名（必要に応じて変更）
-  password:            # ← ローカルにパスワードがある場合は記入
 
 
 development:
@@ -59,14 +51,12 @@ development:
   # Defaults to warning.
   #min_messages: notice
 
-
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
   database: task_master_test
-
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -89,27 +79,19 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  # Multi-DB example (primary / cache / queue / cable)
   primary: &primary_production
     <<: *default
-    # 本番（Render など）では DATABASE_URL を使うことが多いですが、
-    # ここでは Rails のマルチDB構成に沿って個別指定しています。
     database: task_master_production
     username: task_master
     password: <%= ENV["TASK_MASTER_DATABASE_PASSWORD"] %>
-    # 本番が外部サービス（Render）等で SSL 必須の場合は、ENV の DATABASE_URL 側で
-    # `?sslmode=require` を付けるか、接続ドライバの設定で SSL を有効にしてください。
-
   cache:
     <<: *primary_production
     database: task_master_production_cache
     migrations_paths: db/cache_migrate
-
   queue:
     <<: *primary_production
     database: task_master_production_queue
     migrations_paths: db/queue_migrate
-
   cable:
     <<: *primary_production
     database: task_master_production_cable
