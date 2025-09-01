@@ -88,29 +88,17 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# ------------------------------------------------------------
+# 本番（Render）— 単一DB構成
+#  - default を継承しないことで、host: localhost 等のローカル値が混入しません。
+#  - Render の環境変数「DATABASE_URL」を必須とします。
+#  - 例: postgres://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require
+# ------------------------------------------------------------
 production:
-  # Multi-DB example (primary / cache / queue / cable)
-  primary: &primary_production
-    <<: *default
-    # 本番（Render など）では DATABASE_URL を使うことが多いですが、
-    # ここでは Rails のマルチDB構成に沿って個別指定しています。
-    database: task_master_production
-    username: task_master
-    password: <%= ENV["TASK_MASTER_DATABASE_PASSWORD"] %>
-    # 本番が外部サービス（Render）等で SSL 必須の場合は、ENV の DATABASE_URL 側で
-    # `?sslmode=require` を付けるか、接続ドライバの設定で SSL を有効にしてください。
-
-  cache:
-    <<: *primary_production
-    database: task_master_production_cache
-    migrations_paths: db/cache_migrate
-
-  queue:
-    <<: *primary_production
-    database: task_master_production_queue
-    migrations_paths: db/queue_migrate
-
-  cable:
-    <<: *primary_production
-    database: task_master_production_cable
-    migrations_paths: db/cable_migrate
+  primary:
+    url: <%= ENV.fetch("DATABASE_URL") %>
+    # （任意）プールサイズを個別に指定したい場合は次行のコメントを外す
+    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    # （任意）SSL必須の場合は DATABASE_URL に `?sslmode=require` を付与してください
+    # （任意）タイムアウト等が必要なら追加
+    # connect_timeout: 5
