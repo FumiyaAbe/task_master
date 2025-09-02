@@ -1,4 +1,4 @@
-# PostgreSQL. Versions 9.3 and up are supported.
+# PostgreSQL. Versions 9.3+ are supported.
 #
 # Install the pg driver:
 #   gem install pg
@@ -12,22 +12,38 @@
 # Configure Using Gemfile
 # gem "pg"
 #
+# 目的:
+#   - 開発/テストはローカル PostgreSQL に接続
+#   - 本番（Render）は DATABASE_URL ひとつで接続（単一DB）
+#   - 本番は default を継承せず、ローカル用の host: localhost 等が混入しないようにする
+#
+# 備考:
+#   - Render の Postgres を使う場合、DATABASE_URL の末尾に `?sslmode=require`
+#     を付与すると接続が安定します（例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require）。
+#   - プールサイズは RAILS_MAX_THREADS で調整できます。
+
+# ------------------------------------------------------------
+# 共通（ローカル向けのデフォルト値）
+# ------------------------------------------------------------
 default: &default
   adapter: postgresql
   encoding: unicode
-  # For details on connection pooling, see Rails configuration guide
+  # For details on connection pooling, see Rails configuration guide:
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  #
+
   # ---- Local connection defaults (explicit) ----
   # ローカルの Postgres に接続するためのデフォルト値を明示します。
-  # ここは開発・テスト・（必要なら）本番の共通値として継承されます。
+  # 開発・テストではこの値を継承します（本番は継承しません）。
   host: localhost      # ← ローカルのホスト名
   port: 5432           # ← Postgres のデフォルトポート
   # username: postgres   # ← ローカルの PG ユーザー名（必要に応じて変更）
   password:            # ← ローカルにパスワードがある場合は記入
 
 
+# ------------------------------------------------------------
+# 開発
+# ------------------------------------------------------------
 development:
   <<: *default
   database: task_master_development
@@ -36,69 +52,54 @@ development:
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: task_master
+  # username: task_master
 
   # The password associated with the PostgreSQL role (username).
-  #password:
+  # password:
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
   # domain sockets, so uncomment these lines.
-  #host: localhost
+  # host: localhost
 
   # The TCP port the server listens on. Defaults to 5432.
   # If your server runs on a different port number, change accordingly.
-  #port: 5432
+  # port: 5432
 
   # Schema search path. The server defaults to $user,public
-  #schema_search_path: myapp,sharedapp,public
+  # schema_search_path: myapp,sharedapp,public
 
   # Minimum log levels, in increasing order:
   #   debug5, debug4, debug3, debug2, debug1,
   #   log, notice, warning, error, fatal, and panic
   # Defaults to warning.
-  #min_messages: notice
+  # min_messages: notice
 
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
+# ------------------------------------------------------------
+# テスト
+# ------------------------------------------------------------
 test:
   <<: *default
   database: task_master_test
 
 
-# As with config/credentials.yml, you never want to store sensitive information,
-# like your database password, in your source code. If your source code is
-# ever seen by anyone, they now have access to your database.
-#
-# Instead, provide the password or a full connection URL as an environment
-# variable when you boot the app. For example:
-#
-#   DATABASE_URL="postgres://myuser:mypass@localhost/somedatabase"
-#
-# If the connection URL is provided in the special DATABASE_URL environment
-# variable, Rails will automatically merge its configuration values on top of
-# the values provided in this file. Alternatively, you can specify a connection
-# URL environment variable explicitly:
-#
-#   production:
-#     url: <%= ENV["MY_APP_DATABASE_URL"] %>
-#
-# Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
-# for a full overview on how database connection configuration can be specified.
-#
 # ------------------------------------------------------------
-# 本番（Render）— 単一DB構成
-#  - default を継承しないことで、host: localhost 等のローカル値が混入しません。
-#  - Render の環境変数「DATABASE_URL」を必須とします。
-#  - 例: postgres://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require
+# 本番（Render）— 単一DB構成（single DB）
+#
+# 重要：
+#   - 単一DBでは `production` 直下に `url:` を置きます（`primary:` は使いません）。
+#   - default を継承しないため、host: localhost 等のローカル値は混入しません。
+#   - Render の環境変数 `DATABASE_URL` を必須とします。
+#   - 例: postgres://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require
 # ------------------------------------------------------------
 production:
-  primary:
-    url: <%= ENV.fetch("DATABASE_URL") %>
-    # （任意）プールサイズを個別に指定したい場合は次行のコメントを外す
-    # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-    # （任意）SSL必須の場合は DATABASE_URL に `?sslmode=require` を付与してください
-    # （任意）タイムアウト等が必要なら追加
-    # connect_timeout: 5
+  url: <%= ENV.fetch("DATABASE_URL") %>
+  # （任意）プールサイズを個別に指定したい場合は次行のコメントを外す
+  # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # （任意）接続タイムアウト等が必要なら追加
+  # connect_timeout: 5
+
+# 参考（使わない例：マルチDB）
+#   マルチDBにする場合は `production: primary:`, `cache:`, `queue:` などを定義します。
+#   今回は単一DBのため、上記のように production 直下に url: を置いています。
