@@ -105,8 +105,9 @@ production:
     # 必要に応じて個別に上書き可（例：pool: 5 など）
     # pool: 5
 
-# 参考（使わない例：従来の単一定義）
-# production:
-#   url: <%= ENV.fetch("DATABASE_URL") %>
-#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-#   # この単一定義では `production.cable` が存在せず、Rails 8 では起動時にエラーになります。
+  # Rails 8 の Solid Queue（ActiveJob）用。単一DB運用なので primary を継承。
+  queue:
+    <<: *primary_production
+    # 必要に応じて個別に上書き可（例：pool: 5 など）
+    # pool: 5
+
