@@ -94,20 +94,25 @@ test:
 #   - default は継承しません（ローカル向け host: や port: が混ざらないようにするため）。
 # ------------------------------------------------------------
 production:
-  primary: &primary_production
+  primary:
     adapter: postgresql
     url: <%= ENV.fetch("DATABASE_URL") %>  # 例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-  # Rails 8 の Action Cable（solid_cable）用。単一DB運用なので primary を継承。
+  # Action Cable（solid_cable）
   cable:
-    <<: *primary_production
-    # 必要に応じて個別に上書き可（例：pool: 5 など）
-    # pool: 5
+    adapter: postgresql
+    url: <%= ENV.fetch("DATABASE_URL") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-  # Rails 8 の Solid Queue（ActiveJob）用。単一DB運用なので primary を継承。
+  # Solid Queue（ActiveJob）
   queue:
-    <<: *primary_production
-    # 必要に応じて個別に上書き可（例：pool: 5 など）
-    # pool: 5
+    adapter: postgresql
+    url: <%= ENV.fetch("DATABASE_URL") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
+  # Solid Cache
+  cache:
+    adapter: postgresql
+    url: <%= ENV.fetch("DATABASE_URL") %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
