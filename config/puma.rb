@@ -32,7 +32,7 @@ threads min_threads, max_threads
 
 # === Port (equivalent to CLI: `-p ${PORT:-3000}`)
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT", 3000)
+port ENV.fetch("PORT") { 10000 }
 
 # === Environment
 # Prefer RAILS_ENV over RACK_ENV for Rails apps. Default to "production" in this config
