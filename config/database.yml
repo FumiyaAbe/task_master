@@ -85,21 +85,28 @@ test:
 
 
 # ------------------------------------------------------------
-# 本番（Render）— 単一DB構成（single DB）
+# 本番（Render）— 単一DB構成（Solid Cable 対応）
 #
 # 重要：
-#   - 単一DBでは `production` 直下に `url:` を置きます（`primary:` は使いません）。
-#   - default を継承しないため、host: localhost 等のローカル値は混入しません。
-#   - Render の環境変数 `DATABASE_URL` を必須とします。
-#   - 例: postgres://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require
+#   - Rails 8（Solid Cable/Action Cable）が `production.cable` を参照するため、
+#     `production:` の下を複数DB形式（primary / cable）で定義します。
+#   - どちらも同じ DATABASE_URL を使います（必要に応じて将来分離可）。
+#   - default は継承しません（ローカル向け host: や port: が混ざらないようにするため）。
 # ------------------------------------------------------------
 production:
-  url: <%= ENV.fetch("DATABASE_URL") %>
-  # （任意）プールサイズを個別に指定したい場合は次行のコメントを外す
-  # pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # （任意）接続タイムアウト等が必要なら追加
-  # connect_timeout: 5
+  primary: &primary_production
+    adapter: postgresql
+    url: <%= ENV.fetch("DATABASE_URL") %>  # 例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-# 参考（使わない例：マルチDB）
-#   マルチDBにする場合は `production: primary:`, `cache:`, `queue:` などを定義します。
-#   今回は単一DBのため、上記のように production 直下に url: を置いています。
+  # Rails 8 の Action Cable（solid_cable）用。単一DB運用なので primary を継承。
+  cable:
+    <<: *primary_production
+    # 必要に応じて個別に上書き可（例：pool: 5 など）
+    # pool: 5
+
+# 参考（使わない例：従来の単一定義）
+# production:
+#   url: <%= ENV.fetch("DATABASE_URL") %>
+#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#   # この単一定義では `production.cable` が存在せず、Rails 8 では起動時にエラーになります。
