@@ -30,6 +30,14 @@ module TaskMaster
     # 日本語訳が無い場合は英語にフォールバック
     config.i18n.fallbacks = [ :en ]
 
+
+    # app/middleware を読み込み対象に
+    config.autoload_paths << Rails.root.join("app/middleware")
+    config.eager_load_paths << Rails.root.join("app/middleware")
+
+    # ミドルウェアを先頭に差し込む（最優先で評価）
+    require Rails.root.join("app/middleware/basic_auth")
+    config.middleware.insert_before 0, BasicAuth
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
