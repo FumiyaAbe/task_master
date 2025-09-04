@@ -38,4 +38,5 @@ Rails.application.routes.draw do
   # ▼ フルCRUDに変更（edit/update/destroy を含む）
   resources :tasks
   resources :events
+  get "/up", to: "health#up"
 end
