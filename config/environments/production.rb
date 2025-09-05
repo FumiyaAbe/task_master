@@ -41,14 +41,13 @@ Rails.application.configure do
     basic_auth_on = ENV.fetch("BASIC_AUTH_ENABLED", "false").to_s.strip.downcase == "true"
 
     if basic_auth_on
-      # ミドルウェアを最優先で差し込む
       config.middleware.insert_before 0, ::BasicAuth
-      Rails.logger.info("[Boot] BasicAuth middleware inserted (ENV=BASIC_AUTH_ENABLED=true)")
+      puts "[Boot] BasicAuth middleware inserted (ENV=BASIC_AUTH_ENABLED=true)"
     else
-      Rails.logger.info("[Boot] BasicAuth disabled by ENV (ENV=BASIC_AUTH_ENABLED=#{ENV['BASIC_AUTH_ENABLED'].inspect})")
+      puts "[Boot] BasicAuth disabled by ENV (ENV=BASIC_AUTH_ENABLED=#{ENV['BASIC_AUTH_ENABLED'].inspect})"
     end
   rescue => e
-    Rails.logger.error("[Boot] BasicAuth setup error: #{e.class}: #{e.message}")
+    warn "[Boot] BasicAuth setup error: #{e.class}: #{e.message}"
   end
   # --- /Basic認証 ---
 
