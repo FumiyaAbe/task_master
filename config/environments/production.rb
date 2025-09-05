@@ -33,12 +33,22 @@ Rails.application.configure do
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  # --- Basic認証（本番のみ・ENVで制御） ---
-  require "digest"
-  require Rails.root.join("app/middleware/basic_auth")
-  if ENV["BASIC_AUTH_ENABLED"] == "true"
-    # ミドルウェアを最優先で実行
-    config.middleware.insert_before 0, ::BasicAuth
+  # --- Basic認証（本番のみ・ENVで制御：堅牢版） ---
+  begin
+    require "digest"
+    require Rails.root.join("app/middleware/basic_auth").to_s
+
+    basic_auth_on = ENV.fetch("BASIC_AUTH_ENABLED", "false").to_s.strip.downcase == "true"
+
+    if basic_auth_on
+      # ミドルウェアを最優先で差し込む
+      config.middleware.insert_before 0, ::BasicAuth
+      Rails.logger.info("[Boot] BasicAuth middleware inserted (ENV=BASIC_AUTH_ENABLED=true)")
+    else
+      Rails.logger.info("[Boot] BasicAuth disabled by ENV (ENV=BASIC_AUTH_ENABLED=#{ENV['BASIC_AUTH_ENABLED'].inspect})")
+    end
+  rescue => e
+    Rails.logger.error("[Boot] BasicAuth setup error: #{e.class}: #{e.message}")
   end
   # --- /Basic認証 ---
 
