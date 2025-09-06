@@ -143,3 +143,13 @@
 ### Association
 - belongs_to :group
 - belongs_to :user
+
+
+### Basic認証パスワード
+| Key                  | Value                   | メモ                 |
+| -------------------- | ------------------------| -------------------- |
+| `BASIC_AUTH_ENABLED` | `true or false`         | ON/OFF 切替。公開時は false |
+| `BASIC_AUTH_USER`    | `tm-admin`              | Basic認証ユーザー名    |
+| `BASIC_AUTH_PASS`    | `maple-river-82-bright` | Basic認証パスワード    |
+| -------------------- | ----------------------- | -------------------- |
+| `WEB_CONCURRENCY`    | `1`                     | Render の並列プロセス数を制御。シングルワーカー推奨 |
