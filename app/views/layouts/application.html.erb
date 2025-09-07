@@ -23,7 +23,17 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <%# ユーザーごとのアクセント色（未定義/未設定でも落ちないガード付き） %>
+  <%
+    accent =
+      if current_user&.respond_to?(:accent_color) && current_user.accent_color.present?
+        current_user.accent_color
+      else
+        "#2563EB"
+      end
+  %>
+
+  <body style="--accent: <%= accent %>; --color-accent: <%= accent %>">
     <%= render "shared/nav" %>
 
     <main class="container mx-auto mt-6 px-5">

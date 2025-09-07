@@ -10,13 +10,13 @@
 
 ## users テーブル（✅ 実装済み）
 
-| Column             | Type   | Options                          |
-|--------------------|--------|----------------------------------|
-| name               | string | null: false                      |
-| email              | string | null: false, unique: true        |
-| encrypted_password | string | null: false                      |
-| accent_color       | string |                                  |
-| task_color_scheme  | string |                                  |
+| Column             | Type   | Options                   |
+|--------------------|--------|---------------------------|
+| name               | string | null: false               |
+| email              | string | null: false, unique: true |
+| encrypted_password | string | null: false               |
+| accent_color       | string |                           |
+| task_color_scheme  | string |                           |
 
 ### Association
 - has_many :tasks
@@ -36,6 +36,7 @@
 | Column  | Type       | Options                         |
 |---------|------------|----------------------------------|
 | name    | string     | null: false                     |
+| color   | string     |                                  | <!-- NEW: 表示色デフォルト -->
 | user    | references | null: false, foreign_key: true  |
 
 ### Association
@@ -49,6 +50,7 @@
 | Column | Type       | Options                         |
 |--------|------------|----------------------------------|
 | name   | string     | null: false                     |
+| color  | string     |                                  | <!-- NEW: 表示色デフォルト -->
 | user   | references | null: false, foreign_key: true  |
 
 ### Association
@@ -57,7 +59,7 @@
 
 ---
 
-## tasks テーブル（✅ 実装済み）
+## tasks テーブル（✅ 実装済み｜🧭 一部拡張予定）
 
 | Column          | Type       | Options                         |
 |-----------------|------------|----------------------------------|
@@ -68,15 +70,17 @@
 | user            | references | null: false, foreign_key: true  |
 | status          | references |                                  |
 | priority_level  | references |                                  |
+| color           | string     | 🧭 **個別上書き用**（任意）           | <!-- NEW -->
 
 ### Association
 - belongs_to :user
 - belongs_to :status, optional: true
 - belongs_to :priority_level, optional: true
+- has_many :reminders, as: :remindable  <!-- 🧭 -->
 
 ---
 
-## events テーブル（✅ 実装済み）
+## events テーブル（✅ 実装済み｜🧭 一部拡張予定）
 
 | Column     | Type       | Options                         |
 |------------|------------|----------------------------------|
@@ -86,9 +90,29 @@
 | notify     | boolean    | null: false, default: false     |
 | visible    | boolean    | null: false, default: true      |
 | user       | references | null: false, foreign_key: true  |
+| color      | string     | 🧭 **個別上書き用**（任意）           | <!-- NEW -->
 
 ### Association
 - belongs_to :user
+- has_many :reminders, as: :remindable  <!-- 🧭 -->
+
+---
+
+## reminders テーブル（🧭 予定）※ リマインド機能の中核
+
+| Column          | Type       | Options                                   |
+|-----------------|------------|--------------------------------------------|
+| user            | references | null: false, foreign_key: true            |
+| remindable      | polymorphic| null: false                               | <!-- Task or Event -->
+| schedule_type   | string     | null: false  <!-- "before_due", "exact", "daily_digest" など --> |
+| offset_minutes  | integer    |            <!-- 例: 1440 (=1日前)         --> |
+| run_at          | datetime   |            <!-- exact 用                   --> |
+| active          | boolean    | null: false, default: true                |
+| last_sent_at    | datetime   |                                            |
+
+### Association
+- belongs_to :user
+- belongs_to :remindable, polymorphic: true
 
 ---
 
@@ -96,8 +120,8 @@
 
 | Column      | Type       | Options                         |
 |-------------|------------|----------------------------------|
-| method      | string     |                                  |
-| notify_time | time       |                                  |
+| method      | string     |                                  | <!-- "email" など -->
+| notify_time | time       |                                  | <!-- 毎朝ダイジェスト等 -->
 | user        | references | null: false, foreign_key: true  |
 
 ### Association
@@ -143,13 +167,3 @@
 ### Association
 - belongs_to :group
 - belongs_to :user
-
-
-### Basic認証パスワード
-| Key                  | Value                   | メモ                 |
-| -------------------- | ------------------------| -------------------- |
-| `BASIC_AUTH_ENABLED` | `true or false`         | ON/OFF 切替。公開時は false |
-| `BASIC_AUTH_USER`    | `tm-admin`              | Basic認証ユーザー名    |
-| `BASIC_AUTH_PASS`    | `maple-river-82-bright` | Basic認証パスワード    |
-| -------------------- | ----------------------- | -------------------- |
-| `WEB_CONCURRENCY`    | `1`                     | Render の並列プロセス数を制御。シングルワーカー推奨 |

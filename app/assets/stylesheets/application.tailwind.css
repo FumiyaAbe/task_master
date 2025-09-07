@@ -199,3 +199,16 @@
   .chip-sat      { color:#1d4ed8; background:#dbeafe; border-color:#bfdbfe; }
   .chip-sat:hover{ background:#bfdbfe; }
 }
+/* ==== accent ブリッジ & ユーティリティ（append） ==== */
+
+/* body で与える --accent を既存トークン系にも橋渡し */
+@layer base {
+  :root { --accent: var(--color-accent); }
+}
+
+/* 任意の場所でアクセント色を使うための簡易ユーティリティ */
+@layer utilities {
+  .text-accent   { color: var(--accent); }
+  .border-accent { border-color: var(--accent); }
+  .bg-accent     { background-color: var(--accent); color: #fff; }
+}
