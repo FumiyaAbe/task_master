@@ -3,18 +3,100 @@
   <div class="page-head mb-4">
     <h1 class="text-2xl font-bold">Tasks</h1>
     <% if user_signed_in? %>
-      <%= link_to "新規タスク", new_task_path, class: "btn-accent" %>
+      <%= link_to "新規タスク", new_task_path, class: "btn btn-accent" %>
     <% end %>
   </div>
+
+  <!-- 一覧アクション行（検索・フィルタ・並び替え） -->
+  <%= form_with url: tasks_path, method: :get, local: true, html: { role: "search", "aria-label": "タスク検索" } do %>
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <label class="toolbar-label" for="q">検索</label>
+        <input id="q" name="q" type="search"
+               value="<%= params[:q].to_s %>"
+               placeholder="タイトルを検索"
+               class="input-inline"
+               autocomplete="off"
+               aria-label="タイトルを検索" />
+
+        <label class="toolbar-label" for="status">状態</label>
+        <select id="status" name="status" class="select-inline" aria-label="状態で絞り込み">
+          <option value="">すべて</option>
+          <% ["todo","doing","done"].each do |s| %>
+            <option value="<%= s %>" <%= "selected" if params[:status].to_s == s %>><%= s %></option>
+          <% end %>
+        </select>
+
+        <label class="toolbar-label" for="priority">優先度</label>
+        <select id="priority" name="priority" class="select-inline" aria-label="優先度で絞り込み">
+          <option value="">すべて</option>
+          <% ["low","normal","high","urgent"].each do |p| %>
+            <option value="<%= p %>" <%= "selected" if params[:priority].to_s == p %>><%= p %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="toolbar-right">
+        <label class="toolbar-label" for="sort">並び替え</label>
+        <select id="sort" name="sort" class="select-inline" aria-label="並び替え">
+          <% sorts = {
+               ""                => "おすすめ",
+               "due_at_asc"      => "期限が近い順",
+               "due_at_desc"     => "期限が遠い順",
+               "created_desc"    => "新しい順",
+               "created_asc"     => "古い順"
+             } %>
+          <% sorts.each do |val,label| %>
+            <option value="<%= val %>" <%= "selected" if params[:sort].to_s == val %>><%= label %></option>
+          <% end %>
+        </select>
+
+        <button type="submit" class="btn btn-main">適用</button>
+        <%= link_to "リセット", tasks_path, class: "btn btn-ghost-dark", "aria-label": "検索条件をリセット" %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 結果件数 & アクティブフィルタ表示（スクリーンリーダ向けにライブ領域） -->
+  <div class="mb-3" aria-live="polite">
+    <span class="text-sm text-gray-600">
+      <%= @tasks.total_count rescue @tasks.size %> 件
+    </span>
+    <% active = [] %>
+    <% active << "検索: “#{params[:q]}”" if params[:q].present? %>
+    <% active << "状態: #{params[:status]}" if params[:status].present? %>
+    <% active << "優先度: #{params[:priority]}" if params[:priority].present? %>
+    <% if params[:sort].present? %>
+      <% label = { "due_at_asc"=>"期限が近い順", "due_at_desc"=>"期限が遠い順",
+                   "created_desc"=>"新しい順", "created_asc"=>"古い順" }[params[:sort].to_s] || "おすすめ" %>
+      <% active << "並び: #{label}" %>
+    <% end %>
+    <% if active.any? %>
+      <span class="ml-2 text-sm">
+        <% active.each do |chip| %>
+          <span class="badge badge-gray"><%= chip %></span>
+        <% end %>
+      </span>
+    <% end %>
+  </div>
+
 
   <% if @tasks.any? %>
     <!-- カードグリッド -->
     <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
       <% @tasks.each do |task| %>
         <div class="card">
+          <!-- 追加：カード全体を詳細にリンク（不可視の拡張クリック領域） -->
+          <%= link_to "", task_path(task, request.query_parameters.except(:controller, :action, :id)),
+                class: "card-link", "aria-label": "#{task.title} の詳細へ" %>
+                
           <div class="flex items-start justify-between gap-3">
             <div>
-              <%= link_to task.title, task_path(task), class: "card-title" %>
+              <!-- タイトル左に小アイコン -->
+              <div class="flex items-center gap-2">
+                <span class="icon-bullet"><%= status_icon(task) %></span>
+                <%= link_to task.title, task_path(task), class: "card-title" %>
+              </div>
 
               <!-- ステータス / 優先度 バッジ -->
               <div class="mt-1 space-x-2">
@@ -38,10 +120,23 @@
                   </span>
                 <% end %>
               </div>
+
+              <!-- 期限（絶対日付 + 相対） -->
+              <% if task.respond_to?(:due_at) && task.due_at.present? %>
+                <% phrase, klass = due_phrase_and_class(task) %>
+                <div class="meta-row">
+                  <span class="muted">期限:</span>
+                  <span class="muted"><%= l(task.due_at, format: :long) rescue task.due_at.to_s %></span>
+                  <% if phrase.present? %>
+                    <span class="<%= klass %>">（<%= phrase %>）</span>
+                  <% end %>
+                </div>
+              <% end %>
             </div>
 
-            <%= link_to "詳細", task_path(task), class: "btn-ghost" %>
+            <%= link_to "詳細", task_path(task, request.query_parameters.except(:controller, :action, :id)), class: "btn btn-main" %>
           </div>
+
 
           <% if task.respond_to?(:due_at) && task.due_at.present? %>
             <div class="card-meta mt-3">
@@ -51,13 +146,22 @@
         </div>
       <% end %>
     </div>
+
+    <!-- ページネーション（Kaminari） -->
+    <% if @tasks.respond_to?(:current_page) %>
+      <div class="pagination">
+        <%= paginate @tasks, params: request.query_parameters.except(:page) %>
+      </div>
+    <% end %>
   <% else %>
-    <!-- 空状態 -->
-    <div class="card">
-      <p class="text-sm text-gray-600">まだタスクがありません。</p>
+    <!-- 空状態（Empty State） -->
+    <div class="empty">
+      <div class="empty-illustration">🗂️</div>
+      <div class="empty-title">まだタスクがありません</div>
+      <p class="empty-sub">最初の1件を作成して、今日のやることを整理しましょう。</p>
       <% if user_signed_in? %>
-        <div class="mt-3">
-          <%= link_to "最初のタスクを作成", new_task_path, class: "btn-accent" %>
+        <div class="empty-actions">
+          <%= link_to "最初のタスクを作成", new_task_path, class: "btn btn-accent" %>
         </div>
       <% end %>
     </div>

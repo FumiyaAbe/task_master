@@ -4,18 +4,58 @@
   <% if user_signed_in? %>
     <p class="mb-4">ログイン中：<%= current_user.email %></p>
     <div class="flex gap-3">
-      <%= link_to "Tasks",  tasks_path,  class: "btn-main" %>
-      <%= link_to "Events", events_path, class: "btn-accent" %>
+      <%= link_to "Tasks",  tasks_path,  class: "btn btn-main" %>
+      <%= link_to "Events", events_path, class: "btn btn-accent" %>
       <%= button_to "ログアウト",
             destroy_user_session_path,
             method: :delete,
-            class: "btn-ghost" %>
+            class: "btn btn-ghost-dark" %>
     </div>
   <% else %>
     <p class="mb-4">アカウントを作成して、タスクと予定を管理しましょう。</p>
-    <div class="flex gap-3">
-      <%= link_to "ログイン",   new_user_session_path,      class: "btn-main" %>
-      <%= link_to "新規登録",   new_user_registration_path, class: "btn-accent" %>
+    <div class="mt-6 flex gap-3">
+      <%= link_to "ログイン", new_user_session_path, class: "btn btn-main btn-lg" %>
+      <%= link_to "新規登録", new_user_registration_path, class: "btn btn-accent btn-lg" %>
     </div>
   <% end %>
+</div>
+
+<!-- ここから、テーブルセクション（ステップ4の追加分） -->
+<div class="section">
+  <div class="section-header">
+    <h2 class="section-title">タスク一覧</h2>
+    <% if user_signed_in? %>
+      <%= link_to "新規作成", (defined?(new_task_path) ? new_task_path : "#"), class: "btn btn-accent" %>
+    <% end %>
+  </div>
+
+  <div class="table-wrap">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>タイトル</th>
+          <th>担当</th>
+          <th class="td-center">優先度</th>
+          <th class="td-right">期限</th>
+          <th class="td-center">状態</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ログイン/登録フォームの整備</td>
+          <td>佐藤</td>
+          <td class="td-center">高</td>
+          <td class="td-right">2025-10-20</td>
+          <td class="td-center"><span class="badge-dot badge-ok">進行中</span></td>
+        </tr>
+        <tr>
+          <td>Tailwind恒久対応</td>
+          <td>阿部</td>
+          <td class="td-center">中</td>
+          <td class="td-right">2025-10-22</td>
+          <td class="td-center"><span class="badge-dot badge-warn">確認待ち</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

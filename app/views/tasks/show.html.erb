@@ -1,57 +1,68 @@
-<div class="mx-auto max-w-3xl px-4 py-6">
-  <div class="card">
-    <!-- タイトル + 操作 -->
-    <div class="flex items-start justify-between gap-3">
-      <h1 class="text-2xl font-bold"><%= @task.title %></h1>
-      <% if user_signed_in? %>
-        <div class="flex gap-2">
-          <%= link_to "編集", edit_task_path(@task), class: "btn-main" %>
-          <%= button_to "削除", task_path(@task),
-                method: :delete,
-                data: { confirm: "本当に削除しますか？" },
-                class: "btn-ghost" %>
-        </div>
-      <% end %>
+<div class="mx-auto max-w-4xl px-4 py-6">
+  <!-- ヘッダ -->
+  <div class="page-head mb-3">
+    <h1 class="section-title">Task 詳細</h1>
+    <div class="card-actions">
+      <%= link_to "一覧へ戻る",
+          tasks_path(request.query_parameters.except(:controller, :action, :id)),
+          class: "btn btn-ghost-dark" %>
+
+      <%= link_to "編集",
+          edit_task_path(@task, request.query_parameters.except(:controller, :action, :id)),
+          class: "btn btn-main" %>
+
+      <%= button_to "削除",
+          task_path(@task, request.query_parameters.except(:controller, :action, :id)),
+          method: :delete,
+          data: { turbo_confirm: "削除してよろしいですか？" },
+          class: "btn btn-accent" %>
     </div>
-
-    <!-- ステータス / 優先度 -->
-    <div class="mt-3 space-x-2">
-      <% if @task.status.present? %>
-        <span class="badge <%= @task.status.to_s.downcase == 'done' ? 'badge-green' : 'badge-indigo' %>">
-          状態: <%= @task.status %>
-        </span>
-      <% end %>
-
-      <% if @task.priority.present? %>
-        <% pr = @task.priority.to_s.downcase %>
-        <% pr_class = case pr
-                      when 'high','urgent' then 'badge-red'
-                      when 'low'           then 'badge-gray'
-                      else                       'badge-indigo'
-                      end %>
-        <span class="badge <%= pr_class %>">
-          優先度: <%= @task.priority %>
-        </span>
-      <% end %>
-    </div>
-
-    <!-- 期限 -->
-    <% if @task.due_at.present? %>
-      <div class="card-meta mt-2">
-        期限: <%= l(@task.due_at, format: :long) rescue @task.due_at.to_s %>
-      </div>
-    <% end %>
-
-    <!-- 本文 -->
-    <% if @task.body.present? %>
-      <div class="mt-4 text-gray-700">
-        <%= simple_format(@task.body) %>
-      </div>
-    <% end %>
   </div>
 
-  <!-- 戻る -->
-  <div class="mt-4">
-    <%= link_to "タスク一覧に戻る", tasks_path, class: "btn-ghost" %>
+  <!-- 本文 -->
+  <div class="card card-lg card-hover">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="icon-bullet"><%= status_icon(@task) %></span>
+        <div>
+          <div class="card-title"><%= @task.title %></div>
+          <div class="mt-1 space-x-2">
+            <% if @task.respond_to?(:status) && @task.status.present? %>
+              <% st = @task.status.to_s %>
+              <span class="badge <%= st.downcase == 'done' ? 'badge-green' : 'badge-indigo' %>">
+                状態: <%= st %>
+              </span>
+            <% end %>
+            <% if @task.respond_to?(:priority) && @task.priority.present? %>
+              <% pr = @task.priority.to_s %>
+              <% pr_class =
+                    case pr.downcase
+                    when 'high','urgent' then 'badge-red'
+                    when 'low'           then 'badge-gray'
+                    else                       'badge-indigo'
+                    end %>
+              <span class="badge <%= pr_class %>">優先度: <%= pr %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @task.respond_to?(:due_at) && @task.due_at.present? %>
+      <% phrase, klass = due_phrase_and_class(@task) %>
+      <div class="meta-row">
+        <span class="muted">期限:</span>
+        <span class="muted"><%= l(@task.due_at, format: :long) rescue @task.due_at.to_s %></span>
+        <% if phrase.present? %>
+          <span class="<%= klass %>">（<%= phrase %>）</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @task.respond_to?(:body) && @task.body.present? %>
+      <div class="mt-4 prose">
+        <%= simple_format(h(@task.body)) %>
+      </div>
+    <% end %>
   </div>
 </div>

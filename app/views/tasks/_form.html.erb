@@ -1,50 +1,89 @@
-<%= simple_form_for(@task, wrapper: :default) do |f| %>
-  <!-- ✨ エラーサマリー（共通パーシャル） -->
-  <%= render "shared/error_summary", resource: @task %>
+<%# 共通フォーム: new/edit から render します %>
+<div class="form">
+  <%# ページ上部でのバリデーションメッセージ（Deviseと同じトーン） %>
+  <% if task && task.errors.any? %>
+    <div class="error_notification">
+      <strong>入力内容を確認してください</strong>
+      <ul>
+        <% task.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-  <%# datetime-local 用の値をHTML5形式へ整形（期限がある場合） %>
-  <% due_val = @task.respond_to?(:due_at) ? @task.due_at&.strftime("%Y-%m-%dT%H:%M") : nil %>
+  <%# due_at を日付/時刻に分割して初期値を準備 %>
+  <% due_date_val = task&.due_at&.strftime("%Y-%m-%d") %>
+  <% due_time_val = task&.due_at&.strftime("%H:%M") %>
 
-  <div class="card space-y-5">
-    <!-- タイトル（必須・最大100） -->
-    <%= f.input :title,
-                label: "タイトル",
-                required: true,
-                input_html: { placeholder: "例）仕様確認タスク", maxlength: 100 } %>
-
-    <!-- ステータス / 優先度 -->
-    <div class="grid gap-4 md:grid-cols-2">
-      <%= f.input :status,
-                  as: :select,
-                  label: "状態",
-                  collection: (Task.respond_to?(:statuses) ? Task.statuses.keys : %w[todo doing done]),
-                  prompt: "選択してください" %>
-
-      <%= f.input :priority,
-                  as: :select,
-                  label: "優先度",
-                  collection: (Task.respond_to?(:priorities) ? Task.priorities.keys : %w[low medium high urgent]),
-                  prompt: "選択してください" %>
+  <%= simple_form_for(task) do |f| %>
+    <div class="form-row">
+      <%= f.label :title, "タイトル", class: "form-label" %>
+      <%= f.input_field :title, required: true, class: "input",
+                        placeholder: "例）会議の準備" %>
+      <p class="form-hint">短く要点が分かるタイトルを入力してください。</p>
     </div>
 
-    <!-- 期限 -->
-    <% if @task.respond_to?(:due_at) %>
-      <%= f.input :due_at,
-                  as: :string,
-                  label: "期限",
-                  input_html: { type: "datetime-local", value: due_val, step: 60, autocomplete: "off" } %>
+    <% if Task.column_names.include?("status") || Task.column_names.include?("priority") %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% if Task.column_names.include?("status") %>
+          <div>
+            <%= f.label :status, "状態", class: "form-label" %>
+            <%= f.select :status,
+                  options_for_select([["未着手","todo"],["進行中","doing"],["完了","done"]], f.object.status),
+                  { include_blank: "選択してください" },
+                  class: "select w-full" %>
+          </div>
+        <% end %>
+
+        <% if Task.column_names.include?("priority") %>
+          <%# モデルの enum に自動追従: {"low"=>0,"medium"=>1,"high"=>2} %>
+          <% priority_keys = Task.respond_to?(:priorities) ? Task.priorities.keys : %w[low medium high] %>
+          <% priority_i18n = { "low"=>"低", "medium"=>"標準", "high"=>"高" } %>
+
+          <div>
+            <%= f.label :priority, "優先度", class: "form-label" %>
+            <%= f.select :priority,
+                  options_for_select(priority_keys.map { |k| [priority_i18n[k] || k, k] }, f.object.priority),
+                  { include_blank: "選択してください" },
+                  class: "select w-full" %>
+          </div>
+        <% end %>
+      </div>
     <% end %>
 
-    <!-- 説明（最大2000） -->
-    <%= f.input :body,
-                as: :text,
-                label: "説明",
-                input_html: { placeholder: "補足があれば記入", maxlength: 2000 } %>
+    <% if Task.column_names.include?("due_at") %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <%= f.label :due_on, "期限（日付）", class: "form-label" %>
+          <%= text_field_tag "task[due_on]", due_date_val,
+                type: "date", class: "input w-full", autocomplete: "off" %>
+          <p class="form-hint">例: 2025-11-01</p>
+        </div>
 
-    <!-- アクション -->
-    <div class="flex items-center justify-end gap-2">
-      <%= link_to "一覧に戻る", tasks_path, class: "btn-ghost" %>
-      <%= f.button :submit, (@task.persisted? ? "更新する" : "作成する"), class: "btn-main" %>
+        <div>
+          <%= f.label :due_time, "期限（時刻）", class: "form-label" %>
+          <%= text_field_tag "task[due_time]", due_time_val,
+                type: "time", step: 60, class: "input w-full", autocomplete: "off" %>
+          <p class="form-hint">例: 09:00（分単位で入力できます）</p>
+        </div>
+      </div>
+    <% end %>
+
+    <% if Task.column_names.include?("body") %>
+      <div class="form-row mt-4">
+        <%= f.label :body, "詳細", class: "form-label" %>
+        <%= f.text_area :body, rows: 6, class: "textarea w-full",
+              placeholder: "タスクの詳細、チェックポイント、関連情報など" %>
+      </div>
+    <% end %>
+
+    <div class="form-actions mt-4 flex gap-3">
+      <%= link_to "キャンセル",
+            tasks_path(request.query_parameters.except(:controller, :action, :id)),
+            class: "btn btn-ghost" %>
+      <%= f.button :submit, (task.persisted? ? "更新する" : "作成する"),
+            class: "btn btn-accent btn-lg" %>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

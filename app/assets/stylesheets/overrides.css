@@ -1,0 +1,560 @@
+/* overrides.css — Tailwind非依存の最低限スタイル */
+
+.__probe_flag { display: none !important; }
+
+/* Theme bridge */
+:root {
+  --color-main:   #0F3A69;   /* ブランド紺 */
+  --accent:       #2563EB;   /* アクセント青 */
+  --accent-hover: #3b82f6;   /* 明るい青（hover統一） */
+}
+
+/* ================== Header ================== */
+.site-header {
+  background-color: var(--color-main);
+  color: #fff;
+}
+
+/* 共通リンク（ボタン以外） */
+.site-header a {
+  color: rgba(255,255,255,.9);
+  text-decoration: none;
+  transition: color .15s ease, opacity .15s ease, text-decoration-color .15s ease, background-color .15s ease;
+}
+
+/* ← ここを“水色に変化 & 下線ナシ”に変更（TASKMASTER含む） */
+.site-header a:not(.btn):not(.btn-main):not(.btn-accent):not(.btn-ghost-dark):not(.btn-accent-dark):hover,
+.site-header a:not(.btn):not(.btn-main):not(.btn-accent):not(.btn-ghost-dark):not(.btn-accent-dark):focus-visible {
+  color: #60a5fa;            /* 水色 */
+  text-decoration: none;     /* 下線を出さない */
+  opacity: 1;
+}
+
+/* 任意：ブランド名に class を付けた場合の補助 */
+.site-header .brand, .site-header .brand-link {
+  transition: color .15s ease;
+}
+.site-header .brand:hover,
+.site-header .brand-link:hover { color: #60a5fa; }
+
+/* ================== Buttons（ライト面） ================== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .5rem .75rem; border-radius: .75rem; font-size: .875rem; font-weight: 500;
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: background-color .15s, color .15s, box-shadow .15s, filter .15s;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ブランド色ボタン（ライト面） — hover で少し明るく */
+.btn-main { background: var(--color-main); color: #fff; }
+.btn-main:hover { background: #134a85; }
+
+/* アクセント色ボタン（ライト面） — hover で明るい青に統一 */
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: var(--accent-hover); }
+
+/* サイズ */
+.btn-lg { padding: .625rem 1rem; font-size: 1rem; }
+
+/* ================== Buttons（ダークヘッダー用） ================== */
+
+/* 「ログイン」：ゴーストは“明るく”なる演出を強める */
+.btn-ghost-dark {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .5rem .75rem; border-radius: .75rem; font-size: .875rem; font-weight: 500;
+  color: rgba(255,255,255,.9); background: transparent; border: 1px solid rgba(255,255,255,.2);
+  transition: background-color .15s, color .15s, box-shadow .15s, border-color .15s;
+}
+.btn-ghost-dark:hover,
+.btn-ghost-dark:focus-visible {
+  background: rgba(255,255,255,.22);   /* 以前の .1 → .22 に強化 */
+  color: #fff;
+  border-color: rgba(255,255,255,.35);
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+/* 「新規登録」：塗りボタンも“明るく”統一（白文字のまま視認性○） */
+.btn-accent-dark {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .5rem .75rem; border-radius: .75rem; font-size: .875rem; font-weight: 500;
+  color: #fff; background: var(--accent); box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  transition: background-color .15s, color .15s, box-shadow .15s, filter .15s;
+}
+.btn-accent-dark:hover,
+.btn-accent-dark:focus-visible {
+  background: var(--accent-hover);     /* 明るい青に */
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+/* ================== Chips（必要最低限） ================== */
+.chip-circle { width: 2.25rem; height: 2.25rem; border-radius: 9999px; }
+@media (min-width: 768px) { .chip-circle { width: 2.5rem; height: 2.5rem; } }
+.chip-base {
+  display:inline-flex; align-items:center; justify-content:center; font-variant-numeric:tabular-nums;
+  font-weight:500; font-size:.875rem; line-height:1; cursor:pointer; user-select:none;
+  transition: background-color .15s ease; border-width:1px; outline:none; border-style:solid; border-color:#d1d5db;
+}
+.chip-wd { color:#374151; background:#f3f4f6; }
+.chip-wd:hover { background:#e5e7eb; }
+.chip-out { color:#9ca3af; background:#f9fafb; border-color:#e5e7eb; }
+.chip-out:hover { background:#f3f4f6; }
+.chip-sun { color:#b91c1c; background:#fee2e2; border-color:#fecaca; }
+
+/* ================== Forms ================== */
+.form { max-width: 44rem; margin-inline: auto; }
+.form-row { margin-bottom: 0.875rem; }
+
+.form-label {
+  display: block; font-size: .875rem; font-weight: 600; color: rgba(17,24,39,.95);
+  margin-bottom: .375rem;
+}
+
+.input, .textarea, .select {
+  width: 100%; font-size: .95rem; border-radius: .75rem;
+  border: 1px solid #d1d5db; padding: .625rem .75rem; background: #fff;
+  transition: box-shadow .15s, border-color .15s, background-color .15s;
+}
+.textarea { min-height: 7rem; resize: vertical; }
+.select { padding-right: 2rem; }
+
+.input:focus, .textarea:focus, .select:focus {
+  outline: none; border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+}
+
+/* 成功／警告／エラーの状態 */
+.is-success { border-color: #86efac; background: #f0fdf4; }
+.is-warning { border-color: #fde68a; background: #fffbeb; }
+.is-error   { border-color: #fca5a5; background: #fef2f2; }
+
+/* 補助テキスト */
+.form-hint {
+  margin-top: .35rem; font-size: .78rem; color: #6b7280;
+}
+.form-error {
+  margin-top: .35rem; font-size: .78rem; color: #b91c1c; font-weight: 600;
+}
+
+/* Rails の field_with_errors ラッパー対策 */
+.field_with_errors > .input,
+.field_with_errors > .textarea,
+.field_with_errors > .select {
+  border-color: #f87171; background: #fef2f2;
+  box-shadow: 0 0 0 3px rgba(248,113,113,.2);
+}
+
+/* 横並び（ラベルと入力を左右2列にしたいとき） */
+.form-grid { display: grid; gap: .875rem; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+
+/* アクション行 */
+.form-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1rem; }
+
+/* 小さなトグルやチェック */
+.checkbox { width: 1rem; height: 1rem; border-radius: .375rem; border: 1px solid #d1d5db; }
+.switch {
+  appearance: none; width: 2.5rem; height: 1.4rem; border-radius: 9999px;
+  background: #e5e7eb; position: relative; transition: background-color .2s;
+}
+.switch:before {
+  content: ""; position: absolute; inset: .15rem auto .15rem .15rem;
+  width: 1.1rem; border-radius: 9999px; background: #fff; transition: transform .2s;
+}
+.switch:checked { background: var(--accent); }
+.switch:checked:before { transform: translateX(1.1rem); }
+
+/* ================== Card / List ================== */
+.card {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 1rem;
+  padding: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.card + .card { margin-top: 1rem; }
+
+.card-lg { padding: 1.25rem; border-radius: 1.25rem; }
+.card-hover { transition: box-shadow .15s, transform .15s; }
+.card-hover:hover { box-shadow: 0 6px 24px rgba(0,0,0,.12); transform: translateY(-1px); }
+
+.card-header {
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  margin-bottom: .75rem;
+}
+.card-title { font-size: 1rem; font-weight: 600; }
+.card-meta  { font-size: .78rem; color: #6b7280; }
+
+.card-actions { display:flex; align-items:center; gap:.5rem; }
+
+.section {
+  margin: 1.25rem auto; max-width: 64rem; padding-inline: 1rem;
+}
+.section-header {
+  display:flex; align-items:end; justify-content:space-between; gap:.75rem;
+  margin-bottom: .75rem;
+}
+.section-title { font-size: 1.25rem; font-weight: 700; }
+.section-sub  { font-size: .9rem; color:#6b7280; }
+
+.list { display:grid; gap:.75rem; }
+.list-item {
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  background:#fff; border:1px solid #e5e7eb; border-radius:.875rem; padding:.75rem .9rem;
+}
+.list-item:hover { background:#f9fafb; }
+
+.item-title { font-weight:600; }
+.item-meta  { font-size:.8rem; color:#6b7280; }
+
+.badge {
+  display:inline-flex; align-items:center; gap:.35rem;
+  padding:.25rem .5rem; border-radius:9999px; font-size:.75rem; font-weight:600;
+  background:#eef2ff; color:#3730a3;
+}
+.badge-gray   { background:#f3f4f6; color:#374151; }
+.badge-green  { background:#ecfdf5; color:#065f46; }
+.badge-red    { background:#fef2f2; color:#991b1b; }
+.badge-indigo { background:#eef2ff; color:#3730a3; }
+
+/* ================== Table ================== */
+.table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: .875rem;
+}
+.table thead th {
+  text-align: left; font-size: .8rem; font-weight: 700; color: #6b7280;
+  background: #f9fafb; padding: .6rem .9rem; position: sticky; top: 0;
+}
+.table tbody td {
+  font-size: .9rem; color: #111827; padding: .75rem .9rem; border-top: 1px solid #f1f5f9;
+}
+.table tbody tr:hover { background: #f8fafc; }
+
+/* 角丸（最上段/最下段セル） */
+.table thead th:first-child { border-top-left-radius: .875rem; }
+.table thead th:last-child  { border-top-right-radius: .875rem; }
+.table tbody tr:last-child td:first-child { border-bottom-left-radius: .875rem; }
+.table tbody tr:last-child td:last-child  { border-bottom-right-radius: .875rem; }
+
+/* サイズ・ユーティリティ */
+.table-sm thead th { padding: .45rem .6rem; }
+.table-sm tbody td { padding: .5rem  .6rem; }
+.td-right { text-align: right; }
+.td-center { text-align: center; }
+
+/* ステータス用の小バッジ（テーブル内表示向け） */
+.badge-dot {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .25rem .5rem; border-radius: 9999px; font-size: .75rem; font-weight: 600;
+  background: #f3f4f6; color: #374151;
+}
+.badge-dot::before {
+  content: ""; width: .45rem; height: .45rem; border-radius: 9999px; background: currentColor; opacity: .8;
+}
+.badge-ok    { background:#ecfdf5; color:#047857; }
+.badge-warn  { background:#fffbeb; color:#b45309; }
+.badge-danger{ background:#fef2f2; color:#b91c1c; }
+
+/* ================== Flash Messages ================== */
+.flash-wrap {
+  position: sticky; top: 0; z-index: 40; /* ヘッダー直下に固定 */
+  margin: 0 auto; max-width: 64rem; padding: .75rem 1rem;
+}
+
+.flash {
+  display: flex; align-items: start; gap: .75rem;
+  border: 1px solid; border-radius: .875rem;
+  padding: .75rem .9rem; background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+
+.flash-title { font-weight: 700; font-size: .95rem; }
+.flash-body  { font-size: .9rem; }
+.flash-actions { margin-left: auto; display: flex; gap: .5rem; }
+
+.flash-close {
+  appearance: none; border: none; background: transparent; cursor: pointer;
+  font-size: .9rem; opacity: .8; padding: .25rem .4rem; border-radius: .5rem;
+  transition: background-color .15s, opacity .15s;
+}
+.flash-close:hover { opacity: 1; background: #f3f4f6; }
+
+/* tone */
+.flash-success { background:#f0fdf4; border-color:#86efac; color:#065f46; }
+.flash-info    { background:#eff6ff; border-color:#93c5fd; color:#1e3a8a; }
+.flash-warn    { background:#fffbeb; border-color:#fde68a; color:#92400e; }
+.flash-error   { background:#fef2f2; border-color:#fca5a5; color:#7f1d1d; }
+
+/* 強めの色味・境界と余白の微調整 */
+.flash { border-width: 1px; }
+.flash-success { background:#e7f8ec; border-color:#34d399; color:#065f46; }
+.flash-info    { background:#e9f1ff; border-color:#60a5fa; color:#1e3a8a; }
+.flash-warn    { background:#fff6d8; border-color:#fbbf24; color:#92400e; }
+.flash-error   { background:#ffe8e8; border-color:#f87171; color:#7f1d1d; }
+
+/* sticky をより確実に（親 overflow の影響を受けにくく） */
+.flash-wrap { position: sticky; top: .75rem; z-index: 45; } /* ヘッダーより上: 45 */
+.site-header { z-index: 50; } /* ヘッダーが必ず最前面 */
+
+/* ==== Hero headings (独立運用) ==== */
+.hero-title {
+  font-size: clamp(1.75rem, 1.25rem + 1.6vw, 2.25rem);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a; /* slate-900 寄りでコントラスト高め */
+  margin: 0 0 .5rem;
+}
+.hero-sub {
+  font-size: 1rem;
+  color: #475569; /* slate-600 */
+  max-width: 60ch;
+  margin: .25rem 0 0;
+}
+.hero-eyebrow {
+  display:inline-block; font-size:.8rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.08em;
+  color:#64748b; margin-bottom:.25rem;
+}
+
+/* ==== Devise/SimpleForm のエラー塊をフラッシュ調に ==== */
+.simple_form .error_notification,
+.error_notification {
+  margin: 0 auto 1rem;
+  max-width: 64rem;
+  border: 1px solid #f87171;
+  background: #ffe8e8;
+  color: #7f1d1d;
+  border-radius: .875rem;
+  padding: .75rem .9rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  font-size: .9rem;
+}
+.error_notification strong { font-weight: 700; display: block; margin-bottom: .35rem; }
+.error_notification ul { margin: .35rem 0 0 .9rem; list-style: disc; }
+
+/* 強めのトーンに統一（すでに追加済みならこの値で上書き） */
+.flash { border-width: 1px; }
+.flash-success { background:#e7f8ec; border-color:#34d399; color:#065f46; }
+.flash-info    { background:#e9f1ff; border-color:#60a5fa; color:#1e3a8a; }
+.flash-warn    { background:#fff6d8; border-color:#fbbf24; color:#92400e; }
+.flash-error   { background:#ffe8e8; border-color:#f87171; color:#7f1d1d; }
+
+/* sticky の優先度調整（ヘッダー > フラッシュ） */
+.site-header { z-index: 50; }
+.flash-wrap  { position: sticky; top: .75rem; z-index: 45; }
+
+/* ================== Pagination ================== */
+.pagination {
+  display: flex; align-items: center; gap: .35rem;
+  justify-content: center; margin: 1rem 0;
+  font-size: .9rem; user-select: none;
+}
+
+.page, .page a, .next, .prev, .first, .last, .gap {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.2rem; height: 2.2rem; padding: 0 .6rem;
+  border-radius: .6rem; border: 1px solid #e5e7eb;
+  background: #fff; color: #111827; text-decoration: none;
+  transition: background-color .15s, color .15s, box-shadow .15s, border-color .15s;
+}
+
+.page a:hover, .next a:hover, .prev a:hover, .first a:hover, .last a:hover {
+  background: #f8fafc;
+}
+
+.current, .page.current {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+
+.disabled, .gap {
+  color: #9ca3af; border-color: #e5e7eb; background: #f9fafb;
+}
+
+.pagination .icon {
+  width: 1rem; height: 1rem; line-height: 1; display: inline-block;
+}
+
+/* ================== Empty State ================== */
+.empty {
+  background:#fff; border:1px solid #e5e7eb; border-radius:1rem;
+  padding: 1.25rem; text-align:center;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+.empty-illustration {
+  width: 72px; height: 72px; border-radius: 1rem;
+  margin: 0 auto .75rem;
+  background: #f1f5f9; /* slate-100 */
+  display:flex; align-items:center; justify-content:center;
+  font-size: 32px; color:#94a3b8; /* slate-400 */
+}
+
+.empty-title {
+  font-weight: 800; letter-spacing: -0.02em;
+  font-size: 1.125rem; line-height: 1.25;
+  color:#0f172a; /* slate-900 */
+}
+
+.empty-sub {
+  margin-top: .35rem; font-size: .95rem; color:#475569; /* slate-600 */
+}
+
+.empty-actions {
+  margin-top: .9rem; display:flex; gap:.5rem; justify-content:center;
+}
+/* ================== Index Toolbar (検索・フィルタ・並び替え) ================== */
+.toolbar {
+  display:flex; align-items:center; gap:.75rem; flex-wrap:wrap;
+  background:#fff; border:1px solid #e5e7eb; border-radius: .875rem;
+  padding: .6rem .75rem; margin: 0 0 1rem;
+}
+.toolbar-left, .toolbar-right { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+.toolbar-right { margin-left:auto; }
+
+.input-inline {
+  height: 2.25rem; padding: .45rem .65rem; border-radius: .6rem;
+  border: 1px solid #d1d5db; background: #fff; font-size: .95rem;
+  transition: box-shadow .15s, border-color .15s, background-color .15s;
+}
+.input-inline:focus {
+  outline: none; border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+}
+.select-inline {
+  height: 2.25rem; padding: .45rem 2rem .45rem .65rem; border-radius: .6rem;
+  border: 1px solid #d1d5db; background:#fff right .5rem center / 12px no-repeat;
+  font-size: .95rem; appearance:none; /* 矢印はブラウザ標準を隠す */
+}
+@media (max-width: 480px){
+  .toolbar { padding: .5rem; }
+}
+
+.toolbar .btn { height: 2.25rem; padding: 0 .8rem; }
+.toolbar .btn-ghost-dark { border-color:#e5e7eb; color:#111827; }
+.toolbar .btn-ghost-dark:hover { background:#f3f4f6; color:#111827; }
+
+/* ラベル小さめ */
+.toolbar-label {
+  font-size:.8rem; color:#6b7280; margin-right:.2rem;
+}
+
+/* ================== Card hover / focus improvements ================== */
+.card {
+  position: relative;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+  will-change: transform;
+}
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.10);
+  border-color: #e2e8f0; /* slate-200 */
+}
+.card:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.25); /* accent-ish focus */
+  border-color: #93c5fd;
+}
+
+/* タイトルを“カード全体クリック”で押しやすく */
+.card-link {
+  position: absolute; inset: 0; border-radius: inherit;
+}
+/* 視認できるテキスト部分は上に */
+.card .card-title, .card .card-actions, .card .meta-row { position: relative; z-index: 1; }
+
+/* クリック可能エリアのヒント（ホバー時だけ軽く） */
+.card:hover .card-title { text-decoration: underline; text-decoration-color: #cbd5e1; }
+
+/* キーボードフォーカスの見やすさ */
+a:focus-visible, button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.35);
+  border-radius: .6rem;
+}
+/* ================== Date / Time Inputs — click whole field ================== */
+/* ブラウザ標準UIの影響で「アイコンだけ反応」になるケースを解消する */
+input[type="date"],
+input[type="time"],
+.input[type="date"],
+.input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  cursor: text;                  /* テキスト入力もできるように */
+  width: 100%;
+  min-height: 2.75rem;           /* 既存 .input と同等サイズ */
+  padding: .625rem .75rem;       /* 既存 .input と同等パディング */
+  border: 1px solid #d1d5db;
+  border-radius: .75rem;
+  transition: box-shadow .15s, border-color .15s, background-color .15s;
+  position: relative;            /* Safari 対策（ピッカー領域拡張の基準） */
+}
+
+input[type="date"]:focus,
+input[type="time"]:focus,
+.input[type="date"]:focus,
+.input[type="time"]:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+}
+
+/* WebKit系：カレンダー/時計アイコンの“当たり判定”をフィールド全体に拡張 */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+.input[type="date"]::-webkit-calendar-picker-indicator,
+.input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0;            /* アイコン自体は見せない（UIは開く） */
+  position: absolute;
+  inset: 0;              /* 入力枠 全体をクリック可能に */
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* フォーカスが入った後は通常のテキスト操作もしやすいように、クリックを本体へ委譲 */
+input[type="date"]:focus::-webkit-calendar-picker-indicator,
+input[type="time"]:focus::-webkit-calendar-picker-indicator,
+.input[type="date"]:focus::-webkit-calendar-picker-indicator,
+.input[type="time"]:focus::-webkit-calendar-picker-indicator {
+  pointer-events: none;  /* 2回目以降は文字カーソルで編集しやすく */
+}
+
+/* Firefox: 既定UIでも枠全体クリックでフォーカスするが、見た目を既存 .input に合わせる */
+input[type="date"]::-moz-focus-inner,
+input[type="time"]::-moz-focus-inner {
+  border: 0;
+}
+/* ================== Outline Button ================== */
+/*(白地 → hover で青) ==== */
+.btn-outline {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .5rem .75rem; border-radius: .75rem; font-size: .875rem; font-weight: 500;
+  background: #fff; color: #111827;
+  border: 1px solid #e5e7eb;
+  transition: background-color .15s, color .15s, border-color .15s, box-shadow .15s;
+}
+.btn-outline:hover,
+.btn-outline:focus-visible {
+  background: var(--accent-hover);   /* 明るい青 */
+  color: #fff;
+  border-color: var(--accent-hover);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+/* ==== Day view list cards: 視認性UP（表示設定ボックスと差別化） ==== */
+.list-plain { list-style: none; margin: 0; padding: 0; }
+.item-card {
+  background: #fff; border: 1px solid #e5e7eb; border-radius: .875rem;
+  padding: .75rem .9rem; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.item-card + .item-card { margin-top: .6rem; }
+
+/* 左側の色バーで種類が一目で分かる */
+.item-task  { border-left: 4px solid var(--accent); }  /* 青：Task */
+.item-event { border-left: 4px solid #10b981; }       /* 緑：Event */
+.item-meta  { font-size: .85rem; color: #6b7280; }
+
+/* タイトルを少し強調 */
+.item-title { font-weight: 600; }

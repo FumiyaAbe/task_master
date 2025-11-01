@@ -1,10 +1,17 @@
-<div class="mx-auto max-w-3xl px-4 py-6">
-  <div class="page-head mb-4">
-    <h1 class="text-2xl font-bold">タスクを編集</h1>
-    <div class="flex gap-2">
-      <%= link_to "詳細へ戻る", task_path(@task), class: "btn-ghost" %>
+<div class="mx-auto max-w-4xl px-4 py-6">
+  <div class="page-head mb-3">
+    <h1 class="section-title">タスクを編集</h1>
+    <div class="card-actions">
+      <%= link_to "詳細へ戻る",
+          task_path(@task, request.query_parameters.except(:controller, :action, :id)),
+          class: "btn btn-ghost-dark" %>
+      <%= link_to "一覧へ戻る",
+          tasks_path(request.query_parameters.except(:controller, :action, :id)),
+          class: "btn btn-main" %>
     </div>
   </div>
 
-  <%= render "form", task: @task %>
+  <div class="card card-lg">
+    <%= render "form", task: @task %>
+  </div>
 </div>

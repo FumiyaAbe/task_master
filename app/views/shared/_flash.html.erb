@@ -1,10 +1,36 @@
-<% flash.each do |type, message| %>
-  <% next if message.blank? %>
-  <% klass =
-      case type.to_s
-      when "notice" then "flash-notice"
-      when "alert", "error" then "flash-alert"
-      else "flash-info"
-      end %>
-  <div class="<%= klass %>"><%= message %></div>
+<% tone_class = ->(type) do
+     case type.to_s
+     when "notice", "success" then "flash-success"
+     when "alert",  "warning" then "flash-warn"
+     when "info"             then "flash-info"
+     else                          "flash-error"
+     end
+   end %>
+
+<% if flash.any? %>
+  <div class="flash-wrap">
+    <% flash.each do |type, message| %>
+      <% next if message.blank? %>
+      <div class="flash <%= tone_class.call(type) %>" role="status">
+        <div>
+          <div class="flash-title">
+            <%=
+              case type.to_s
+              when "notice","success" then "成功"
+              when "alert","warning"  then "注意"
+              when "info"             then "お知らせ"
+              else "エラー"
+              end
+            %>
+          </div>
+          <div class="flash-body"><%= message %></div>
+        </div>
+
+        <div class="flash-actions">
+          <button class="flash-close" aria-label="閉じる"
+                  onclick="this.closest('.flash').remove()">✕</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
 <% end %>

@@ -21,6 +21,12 @@
 #   - Render の Postgres を使う場合、DATABASE_URL の末尾に `?sslmode=require`
 #     を付与すると接続が安定します（例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require）。
 #   - プールサイズは RAILS_MAX_THREADS で調整できます。
+#
+# 注意:
+#   - Rails は database.yml を読み込む際、YAML 化の前に ERB を評価します。
+#     そのため、production セクションに `ENV.fetch("DATABASE_URL")` があると、
+#     開発環境でも環境変数未定義で KeyError が発生します。
+#     → 本番は `ENV["DATABASE_URL"]`（fetch ではない）を使って回避します。
 
 # ------------------------------------------------------------
 # 共通（ローカル向けのデフォルト値）
@@ -37,8 +43,8 @@ default: &default
   # 開発・テストではこの値を継承します（本番は継承しません）。
   host: localhost      # ← ローカルのホスト名
   port: 5432           # ← Postgres のデフォルトポート
-  # username: postgres   # ← ローカルの PG ユーザー名（必要に応じて変更）
-  password:            # ← ローカルにパスワードがある場合は記入
+  username: <%= ENV["PGUSER"] || ENV["USER"] %>  # ← macOS のユーザー名を既定に
+  password: <%= ENV["PGPASSWORD"] || "" %>       # ← 必要に応じて設定
 
 
 # ------------------------------------------------------------
@@ -49,9 +55,6 @@ development:
   database: task_master_development
 
   # The specified database role being used to connect to PostgreSQL.
-  # To create additional roles in PostgreSQL see `$ createuser --help`.
-  # When left blank, PostgreSQL will use the default role. This is
-  # the same name as the operating system user running Rails.
   # username: task_master
 
   # The password associated with the PostgreSQL role (username).
@@ -63,7 +66,6 @@ development:
   # host: localhost
 
   # The TCP port the server listens on. Defaults to 5432.
-  # If your server runs on a different port number, change accordingly.
   # port: 5432
 
   # Schema search path. The server defaults to $user,public
@@ -85,34 +87,36 @@ test:
 
 
 # ------------------------------------------------------------
-# 本番（Render）— 単一DB構成（Solid Cable 対応）
+# 本番（Render）— 単一DB構成（Solid Cable / Solid Queue / Solid Cache 対応）
 #
 # 重要：
 #   - Rails 8（Solid Cable/Action Cable）が `production.cable` を参照するため、
-#     `production:` の下を複数DB形式（primary / cable）で定義します。
-#   - どちらも同じ DATABASE_URL を使います（必要に応じて将来分離可）。
+#     `production:` の下を複数DB形式（primary / cable / queue / cache）で定義します。
+#   - どれも同じ DATABASE_URL を使います（将来分離可）。
 #   - default は継承しません（ローカル向け host: や port: が混ざらないようにするため）。
+#   - ERB 評価エラーを避けるため、ここでは `ENV["DATABASE_URL"]` を使用します。
+#     （Render 環境では必ず値が入る前提）
 # ------------------------------------------------------------
 production:
   primary:
     adapter: postgresql
-    url: <%= ENV.fetch("DATABASE_URL") %>  # 例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require
+    url: <%= ENV["DATABASE_URL"] %>   # 例: postgres://USER:PASS@HOST:PORT/DB?sslmode=require
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
   # Action Cable（solid_cable）
   cable:
     adapter: postgresql
-    url: <%= ENV.fetch("DATABASE_URL") %>
+    url: <%= ENV["DATABASE_URL"] %>
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
   # Solid Queue（ActiveJob）
   queue:
     adapter: postgresql
-    url: <%= ENV.fetch("DATABASE_URL") %>
+    url: <%= ENV["DATABASE_URL"] %>
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
   # Solid Cache
   cache:
     adapter: postgresql
-    url: <%= ENV.fetch("DATABASE_URL") %>
+    url: <%= ENV["DATABASE_URL"] %>
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>

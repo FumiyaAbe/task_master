@@ -1,0 +1,32 @@
+<div class="form">
+  <h1 class="hero-title" style="margin-bottom:.5rem">ログイン</h1>
+  <p class="hero-sub">登録済みのメールアドレスとパスワードでサインインしてください。</p>
+
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <div class="form-row">
+      <%= f.label :email, "メールアドレス", class: "form-label" %>
+      <%= f.input_field :email, required: true, autofocus: true, autocomplete: "email", class: "input" %>
+      <p class="form-hint">例: you@example.com</p>
+    </div>
+
+    <div class="form-row">
+      <%= f.label :password, "パスワード", class: "form-label" %>
+      <%= f.input_field :password, required: true, autocomplete: "current-password", class: "input" %>
+    </div>
+
+    <% if devise_mapping.rememberable? %>
+      <div class="form-row" style="display:flex;align-items:center;gap:.5rem">
+        <%= f.check_box :remember_me, class: "checkbox", id: "remember_me" %>
+        <%= f.label :remember_me, "ログイン情報を保存する", class: "form-label", style: "margin:0;font-weight:500" %>
+      </div>
+    <% end %>
+
+    <div class="form-actions">
+      <%= link_to "戻る", root_path, class: "btn btn-ghost-dark" %>
+      <%= f.button :submit, "ログイン", class: "btn btn-accent btn-lg" %>
+    </div>
+  <% end %>
+
+</div>

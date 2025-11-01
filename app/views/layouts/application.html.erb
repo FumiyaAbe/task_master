@@ -18,8 +18,10 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind",    "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "overrides",  "data-turbo-track": "reload" %> <!-- 追加 -->
+    
     <%= javascript_importmap_tags %>
   </head>
 
@@ -32,7 +34,7 @@
         "#2563EB"
       end
   %>
-
+  
   <body style="--accent: <%= accent %>; --color-accent: <%= accent %>">
     <%= render "shared/nav" %>
 
@@ -40,5 +42,6 @@
       <%= render "shared/flash" %>
       <%= yield %>
     </main>
+    <span class="hidden btn btn-ghost-dark btn-accent-dark __probe_flag"></span>
   </body>
 </html>
