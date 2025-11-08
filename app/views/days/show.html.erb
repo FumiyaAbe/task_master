@@ -54,7 +54,7 @@
       <% if @events.any? %>
         <ul class="list-plain">
           <% @events.each do |e| %>
-            <li class="item-card item-event">
+            <li class="item-card item-event relative">
               <div class="flex items-center justify-between">
                 <div class="item-title"><%= e.title.presence || "（無題）" %></div>
                 <div class="item-meta">
@@ -67,6 +67,9 @@
               <% if e.respond_to?(:notes) && e.notes.present? %>
                 <p class="mt-1 text-sm text-gray-700 whitespace-pre-line"><%= e.notes %></p>
               <% end %>
+
+              <!-- カード全面リンク（透明） -->
+              <%= link_to "", event_path(e), class: "card-link", aria_label: "イベント詳細へ" %>
             </li>
           <% end %>
         </ul>
@@ -100,7 +103,7 @@
 
         <ul class="list-plain">
           <% @tasks.each do |t| %>
-            <li class="item-card item-task">
+            <li class="item-card item-task relative">
               <div class="flex items-center justify-between">
                 <div class="item-title"><%= t.title %></div>
                 <div class="item-meta">
@@ -120,6 +123,9 @@
               <% if t.respond_to?(:body) && t.body.present? %>
                 <p class="mt-1 text-sm text-gray-700 whitespace-pre-line"><%= t.body %></p>
               <% end %>
+
+              <!-- カード全面リンク（透明） -->
+              <%= link_to "", task_path(t), class: "card-link", aria_label: "タスク詳細へ" %>
             </li>
           <% end %>
         </ul>
